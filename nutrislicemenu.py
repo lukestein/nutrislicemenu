@@ -4,9 +4,21 @@ import sys
 
 
 SCHOOLS = [
-    {"name": "Angier Elementary", "slug": "angier-elementary"},
-    {"name": "Brown Middle School", "slug": "brown-middle-school"},
+    {"name": "Angier", "slug": "angier-elementary"},
+    {"name": "Brown", "slug": "brown-middle-school"},
 ]
+
+IGNORED_SECTIONS = [
+    "Milk & Condiments",
+    "Extra Extra",
+    "So Deli",
+    "On the Go",
+    ]
+
+HIDE_SECTION_HEADERS = [
+    "Lunch",
+    "Create",
+    ]
 
 # --- SCRIPT ---
 def get_menu_for_school(school_slug, date_obj):
@@ -73,24 +85,28 @@ def get_menu_for_school(school_slug, date_obj):
     
     # Force "General" to the bottom if it exists, otherwise sort alphabetically
     #sorted_sections = sorted(menu_sections.keys(), key=lambda x: (x == "General", x))
-    sorted_sections = [s for s in menu_sections.keys() if s not in ["Milk & Condiments"]]
+    sorted_sections = [s for s in menu_sections.keys() if s not in IGNORED_SECTIONS]
     
     for section in sorted_sections:
-        md_output.append(f"**{section}**")
+        section_md_output = []
+        if section not in HIDE_SECTION_HEADERS:
+            section_md_output.append(f"**{section}**")
         for food in menu_sections[section]:
-            md_output.append(f"- {food}")
+            section_md_output.append(f"- {food}")
+            
+        md_output.append("\n".join(section_md_output))
     
-    return "\n".join(md_output)
+    return "\n\n".join(md_output)
 
 
 def main():
     # Calculate tomorrow
     tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-    tomorrow_str = tomorrow.strftime("%A, %b %d")
+    tomorrow_str = tomorrow.strftime("%a %m/%d")
         
     for school in SCHOOLS:
         
-        print(f"Trying {school['name']} / {tomorrow_str}...")
+        print(f"Trying {school['name']} for {tomorrow_str}...")
         try:
             
             full_message = ""
@@ -104,7 +120,7 @@ def main():
                 requests.post(f"https://ntfy.sh/npslunchmenu-{school['slug']}",
                     data=full_message,
                     headers={
-                        "Title": f"{school['name']} lunch menu ({tomorrow_str})",
+                        "Title": f"{school['name']} menu ({tomorrow_str})",
                         #"Priority": "urgent",
                         "Tags": "plate_with_cutlery",
                         "Markdown": "yes",
