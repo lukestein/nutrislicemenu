@@ -1,7 +1,12 @@
 import requests
 import datetime
 import sys
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+NTFY_TOPIC_STUB = os.getenv("NTFY_TOPIC_STUB", "nutrislicelunchmenu")
 
 SCHOOLS = [
     {"name": "Angier", "slug": "angier-elementary"},
@@ -117,7 +122,7 @@ def main():
             menu_url = f"https://newtonk12.nutrislice.com/menu/{school['slug']}/lunch/{tomorrow.year}-{tomorrow.month}-{tomorrow.day}"
             
             if ("No menu available" not in full_message) and ("Error fetching menu" not in full_message):
-                requests.post(f"https://ntfy.sh/npslunchmenu-{school['slug']}",
+                requests.post(f"https://ntfy.sh/{NTFY_TOPIC_STUB}-{school['slug']}",
                     data=full_message,
                     headers={
                         "Title": f"{school['name']} menu ({tomorrow_str})",
