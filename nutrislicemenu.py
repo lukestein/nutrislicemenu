@@ -9,8 +9,8 @@ load_dotenv()
 NTFY_TOPIC_STUB = os.getenv("NTFY_TOPIC_STUB", "nutrislicelunchmenu")
 
 SCHOOLS = [
-    {"name": "Angier", "slug": "angier-elementary"},
-    {"name": "Brown", "slug": "brown-middle-school"},
+    {"district": "newtonk12", "name": "Angier", "slug": "angier-elementary"},
+    {"district": "newtonk12", "name": "Brown", "slug": "brown-middle-school"},
 ]
 
 IGNORED_SECTIONS = [
@@ -26,9 +26,9 @@ HIDE_SECTION_HEADERS = [
     ]
 
 # --- SCRIPT ---
-def get_menu_for_school(school_slug, date_obj):
+def get_menu_for_school(district, school_slug, date_obj):
     # Use the .api subdomain which returns JSON data
-    url = f"https://newtonk12.api.nutrislice.com/menu/api/weeks/school/{school_slug}/menu-type/lunch/{date_obj.year}/{date_obj.month}/{date_obj.day}/?format=json"
+    url = f"https://{district}.api.nutrislice.com/menu/api/weeks/school/{school_slug}/menu-type/lunch/{date_obj.year}/{date_obj.month}/{date_obj.day}/?format=json"
     
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -117,9 +117,11 @@ def main():
             full_message = ""
             #full_message += f"**Lunch Menu for {tomorrow_str}**\n"
             #full_message += f"\n---\n**{school['name']}**\n"
-            full_message += get_menu_for_school(school['slug'], tomorrow) + "\n"
+            full_message += get_menu_for_school(school['district'],
+                                                school['slug'],
+                                                tomorrow) + "\n"
             
-            menu_url = f"https://newtonk12.nutrislice.com/menu/{school['slug']}/lunch/{tomorrow.year}-{tomorrow.month}-{tomorrow.day}"
+            menu_url = f"https://{school['district']}.nutrislice.com/menu/{school['slug']}/lunch/{tomorrow.year}-{tomorrow.month}-{tomorrow.day}"
             
             if ("No menu available" not in full_message) and ("Error fetching menu" not in full_message):
                 requests.post(f"https://ntfy.sh/{NTFY_TOPIC_STUB}-{school['slug']}",
