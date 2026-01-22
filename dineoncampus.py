@@ -21,6 +21,11 @@ IGNORED_SECTIONS = [
 
 HIDE_SECTION_HEADERS = []
 
+# Text length filters for menu items
+MIN_ITEM_LENGTH = 10
+MAX_ITEM_LENGTH = 100
+MAX_HEADER_LENGTH = 50
+
 # --- SCRIPT ---
 def get_menu_for_school(location, school_slug, date_obj):
     # Build the URL for the Dine On Campus page
@@ -59,7 +64,15 @@ def get_menu_for_school(location, school_slug, date_obj):
     # - Structured divs containing station name and items
     
     # Strategy 1: Look for elements that might be station containers
-    station_containers = soup.find_all(['div', 'section'], class_=lambda x: x and ('station' in x.lower() or 'menu' in x.lower()))
+    def is_station_class(classes):
+        """Check if any class suggests this is a station container."""
+        if not classes:
+            return False
+        # Convert to lowercase once for efficiency
+        classes_lower = ' '.join(classes).lower()
+        return 'station' in classes_lower or 'menu' in classes_lower
+    
+    station_containers = soup.find_all(['div', 'section'], class_=is_station_class)
     
     if not station_containers:
         # Strategy 2: Look for common heading tags that might be station names
@@ -71,13 +84,15 @@ def get_menu_for_school(location, school_slug, date_obj):
             # Check if this could be a section header
             if element.name in ['h2', 'h3', 'h4']:
                 section_text = element.get_text(strip=True)
-                if section_text and len(section_text) < 50:  # Headers are usually short
+                if section_text and len(section_text) < MAX_HEADER_LENGTH:  # Headers are usually short
                     current_section = section_text
                     continue
             
             # Check if element has class suggesting it's a menu item
             classes = element.get('class', [])
-            if any('item' in str(c).lower() or 'dish' in str(c).lower() or 'food' in str(c).lower() for c in classes):
+            # Preprocess classes for efficiency
+            class_strings = [str(c).lower() for c in classes]
+            if any(keyword in cls for cls in class_strings for keyword in ['item', 'dish', 'food']):
                 item_text = element.get_text(strip=True)
                 if item_text and len(item_text) > 0:
                     if current_section not in menu_sections:
@@ -112,7 +127,7 @@ def get_menu_for_school(location, school_slug, date_obj):
             for item in items:
                 item_text = item.get_text(strip=True)
                 # Filter out empty or very long text (likely descriptions)
-                if item_text and 10 < len(item_text) < 100:
+                if item_text and MIN_ITEM_LENGTH < len(item_text) < MAX_ITEM_LENGTH:
                     # Clean up the text
                     item_text = item_text.split('\n')[0]  # Take first line if multi-line
                     if item_text not in menu_sections[station_name]:
@@ -125,7 +140,7 @@ def get_menu_for_school(location, school_slug, date_obj):
         for text in all_text_elements:
             text = text.strip()
             # Filter for reasonable menu item lengths
-            if text and 10 < len(text) < 100 and not text.startswith('<'):
+            if text and MIN_ITEM_LENGTH < len(text) < MAX_ITEM_LENGTH and not text.startswith('<'):
                 if "General" not in menu_sections:
                     menu_sections["General"] = []
                 menu_sections["General"].append(text)
