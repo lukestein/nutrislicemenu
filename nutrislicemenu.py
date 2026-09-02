@@ -1,12 +1,16 @@
+import datetime as dt
+
 import requests
-import datetime
-import sys
-import os
 from dotenv import load_dotenv
 
-load_dotenv()
+from menu_common import (
+    HTTP_TIMEOUT_SECONDS,
+    next_weekday,
+    required_environment_variable,
+    send_notification,
+)
 
-NTFY_TOPIC_STUB = os.getenv("NTFY_TOPIC_STUB", "nutrislicelunchmenu")
+load_dotenv()
 
 SCHOOLS = [
     {"district": "newtonk12", "name": "Angier", "slug": "angier-elementary"},
@@ -18,15 +22,15 @@ IGNORED_SECTIONS = [
     "Extra Extra",
     "So Deli",
     "On the Go",
-    ]
+]
 
 HIDE_SECTION_HEADERS = [
     "Lunch",
     "Create",
-    ]
+]
 
 # --- SCRIPT ---
-def get_menu_for_school(district, school_slug, date_obj):
+def get_menu_for_school(district: str, school_slug: str, date_obj: dt.date) -> str:
     # Use the .api subdomain which returns JSON data
     url = f"https://{district}.api.nutrislice.com/menu/api/weeks/school/{school_slug}/menu-type/lunch/{date_obj.year}/{date_obj.month}/{date_obj.day}/?format=json"
     
@@ -34,12 +38,11 @@ def get_menu_for_school(district, school_slug, date_obj):
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
 
-    try:
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-    except Exception as e:
-        return f"Error fetching menu: {e}"
+    response = requests.get(url, headers=headers, timeout=HTTP_TIMEOUT_SECONDS)
+    response.raise_for_status()
+    data = response.json()
+    if not isinstance(data, dict):
+        raise ValueError("Nutrislice returned an unexpected response")
 
     target_date_str = date_obj.strftime("%Y-%m-%d")
     
@@ -51,7 +54,7 @@ def get_menu_for_school(district, school_slug, date_obj):
             break
             
     if not day_data or not day_data.get('menu_items'):
-        return "No menu available."
+        return ""
 
     menu_sections = {}
     current_section = "General" # Default if no header is found
@@ -77,8 +80,9 @@ def get_menu_for_school(district, school_slug, date_obj):
 
         # 3. Double Check: specific station metadata might override the list position
         # If the item explicitly says it belongs to a station, use that.
-        if item.get('station') and item['station'].get('name'):
-            current_section = item['station']['name']
+        station = item.get("station") or {}
+        if station.get("name"):
+            current_section = station["name"]
 
         if current_section not in menu_sections:
             menu_sections[current_section] = []
@@ -88,8 +92,6 @@ def get_menu_for_school(district, school_slug, date_obj):
     # Format Markdown Output
     md_output = []
     
-    # Force "General" to the bottom if it exists, otherwise sort alphabetically
-    #sorted_sections = sorted(menu_sections.keys(), key=lambda x: (x == "General", x))
     sorted_sections = [s for s in menu_sections.keys() if s not in IGNORED_SECTIONS]
     
     for section in sorted_sections:
@@ -105,39 +107,39 @@ def get_menu_for_school(district, school_slug, date_obj):
 
 
 def main():
-    # Calculate tomorrow
-    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-    tomorrow_str = tomorrow.strftime("%a %m/%d")
+    topic_stub = required_environment_variable("NTFY_TOPIC_STUB")
+    menu_date = next_weekday()
+    menu_date_str = menu_date.strftime("%a %m/%d")
+    failures = []
         
     for school in SCHOOLS:
-        
-        print(f"Trying {school['name']} for {tomorrow_str}...")
+        print(f"Trying {school['name']} for {menu_date_str}...")
         try:
-            
-            full_message = ""
-            #full_message += f"**Lunch Menu for {tomorrow_str}**\n"
-            #full_message += f"\n---\n**{school['name']}**\n"
-            full_message += get_menu_for_school(school['district'],
-                                                school['slug'],
-                                                tomorrow) + "\n"
-            
-            menu_url = f"https://{school['district']}.nutrislice.com/menu/{school['slug']}/lunch/{tomorrow.year}-{tomorrow.month}-{tomorrow.day}"
-            
-            if ("No menu available" not in full_message) and ("Error fetching menu" not in full_message):
-                requests.post(f"https://ntfy.sh/{NTFY_TOPIC_STUB}-{school['slug']}",
-                    data=full_message,
-                    headers={
-                        "Title": f"{school['name']} menu ({tomorrow_str})",
-                        #"Priority": "urgent",
-                        "Tags": "plate_with_cutlery",
-                        "Markdown": "yes",
-                        "Actions": f"view, Website, {menu_url}"
-                    })
-                
-                print(f"Sending notification")
+            message = get_menu_for_school(
+                school["district"], school["slug"], menu_date
+            )
+            if not message:
+                print("No menu available; skipping notification")
+                continue
 
-        except Exception as e:
-            print(f"Failed to send: {e}")
+            menu_url = (
+                f"https://{school['district']}.nutrislice.com/menu/"
+                f"{school['slug']}/lunch/{menu_date.isoformat()}"
+            )
+            send_notification(
+                topic_stub=topic_stub,
+                school_slug=school["slug"],
+                message=message,
+                title=f"{school['name']} menu ({menu_date_str})",
+                menu_url=menu_url,
+            )
+            print("Notification sent")
+        except Exception as exc:
+            failures.append(f"{school['name']}: {exc}")
+            print(f"Failed: {exc}")
+
+    if failures:
+        raise RuntimeError("; ".join(failures))
 
 
 if __name__ == "__main__":

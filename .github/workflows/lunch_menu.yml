@@ -3,39 +3,34 @@ name: Send Lunch Menu Notification
 on:
   workflow_dispatch:
   schedule:
-    # -----------------------------------------------------------
-    # SUMMER SCHEDULE (Daylight Saving Time: UTC-4)
-    # Target: 6:00 PM EDT = 22:00 UTC
-    # Months: March(3) - June(6) AND Sept(9) - Oct(10)
-    # (Excludes July & August for Summer Break)
-    # -----------------------------------------------------------
-    - cron: '0 22 * 3-6,9-10 0-4'
-
-    # -----------------------------------------------------------
-    # WINTER SCHEDULE (Standard Time: UTC-5)
-    # Target: 6:00 PM EST = 23:00 UTC
-    # Months: Nov(11) - Feb(2)
-    # -----------------------------------------------------------
-    - cron: '0 23 * 1-2,11-12 0-4'
+    # Sunday-Thursday evenings during the school year, for the next school
+    # day's menu. A non-zero minute reduces top-of-the-hour runner delays.
+    - cron: '17 18 * 1-6,9-12 0-4'
+      timezone: 'America/New_York'
 
 jobs:
   build-and-notify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-          cache: 'pip' # Caches dependencies to speed up future runs
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m unittest discover -v
 
       - name: Run Menu Script
         env:
