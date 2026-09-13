@@ -90,6 +90,9 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("Apple Calendar", page)
         self.assertIn("Google/Android", page)
         self.assertNotIn('<p class="eyebrow">Lunch menu</p>', page)
+        self.assertIn("#angier { --school-accent:#2f68a0;", page)
+        self.assertIn("#brown { --school-accent:#8a623f;", page)
+        self.assertIn("background:var(--school-tint);", page)
         self.assertIn(
             'href="https://lukestein.com/nutrislicemenu/favicon.svg"', page
         )

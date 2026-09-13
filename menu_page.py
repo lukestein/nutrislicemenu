@@ -246,7 +246,9 @@ def render_menu_page(
     main {{ width:min(70rem,100%); margin:0 auto; padding:1rem; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; align-items:start; }}
     main.single-school {{ grid-template-columns:minmax(0,38rem); justify-content:center; }}
     .school {{ background:var(--paper); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 10px 28px #243a5a0d; }}
-    .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:.65rem; padding:.72rem .85rem; border-bottom:1px solid var(--line); }}
+    #angier {{ --school-accent:#2f68a0; --school-tint:#eef5fc; }}
+    #brown {{ --school-accent:#8a623f; --school-tint:#f7f0e8; }}
+    .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:.65rem; padding:.72rem .85rem; border-top:3px solid var(--school-accent); border-bottom:1px solid var(--line); background:var(--school-tint); }}
     .eyebrow {{ margin:0 0 .08rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }}
     h2 {{ margin:0; font-size:1.28rem; line-height:1.05; }}
     .subscribe-actions {{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); flex:0 1 12.5rem; width:12.5rem; gap:.35rem; }}
