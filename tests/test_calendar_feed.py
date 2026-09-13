@@ -112,6 +112,7 @@ class CalendarTests(unittest.TestCase):
         )
         self.assertIn("DTSTART;VALUE=DATE:20260914", calendar)
         self.assertIn("DTEND;VALUE=DATE:20260915", calendar)
+        self.assertIn("X-WR-TIMEZONE:America/New_York", calendar)
         self.assertIn("TRANSP:TRANSPARENT", calendar)
         self.assertIn("SUMMARY:Angier: cheese 🍕", calendar)
         self.assertNotIn("Weekend Pizza", calendar)
