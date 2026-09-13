@@ -33,11 +33,13 @@ SUMMARY_RULES = {
     },
     "brown-middle-school": {
         "exact": {
-            # Recurring 2Mato and Grill staples.
+            # Daily 2Mato and Grill staples. The vegetarian burger changed
+            # names during the month, but one version remains available daily.
             "Classic Cheese Pizza",
             "Traditional Pepperoni Pizza",
             "Classic American Cheeseburger",
             "Veggie Burger",
+            "Black Bean Burger",
             "Crispy Chicken Patty Sandwich",
             # Recurring On the Go offerings.
             "Crispy Chicken Caesar Salad",
