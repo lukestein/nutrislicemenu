@@ -88,6 +88,13 @@ class MenuPageTests(unittest.TestCase):
         )
         self.assertIn("Apple Calendar", page)
         self.assertIn("Google/Android", page)
+        self.assertIn(
+            'href="https://lukestein.com/nutrislicemenu/favicon.svg"', page
+        )
+        self.assertIn(
+            'href="https://lukestein.com/nutrislicemenu/apple-touch-icon.png"',
+            page,
+        )
         self.assertNotIn("Angier: cheese", page)
 
     def test_page_has_clear_empty_state_when_no_menus_are_posted(self):

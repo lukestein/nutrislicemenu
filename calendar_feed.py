@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import re
+import shutil
 from pathlib import Path
 
 from calendar_config import (
@@ -242,6 +243,12 @@ def generate_calendars(
     )
     output_paths.append(page_path)
     print(f"Wrote {page_path}")
+
+    for asset_name in ("favicon.svg", "apple-touch-icon.png"):
+        asset_path = output_dir / asset_name
+        shutil.copyfile(Path(__file__).with_name(asset_name), asset_path)
+        output_paths.append(asset_path)
+        print(f"Wrote {asset_path}")
 
     for school in SCHOOLS:
         school_page_path = output_dir / school["name"].lower() / "index.html"
