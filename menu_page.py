@@ -207,12 +207,6 @@ def render_menu_page(
 
     generated_local = generated_at.astimezone(EASTERN_TIME)
     updated_label = generated_local.strftime("%b %d, %Y at %I:%M %p").replace(" 0", " ")
-    favicon = (
-        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
-        "%3Crect width='64' height='64' rx='14' fill='%231a3760'/%3E"
-        "%3Ccircle cx='32' cy='32' r='17' fill='%23fff'/%3E"
-        "%3Ccircle cx='32' cy='32' r='10' fill='%23ffb23f'/%3E%3C/svg%3E"
-    )
     if standalone_school:
         school_name = standalone_school["name"]
         document_title = f"{school_name} lunch menu"
@@ -237,7 +231,8 @@ def render_menu_page(
   <meta name="theme-color" content="#18365f">
   <meta name="description" content="{html.escape(description)}">
   <title>{html.escape(document_title)}</title>
-  <link rel="icon" type="image/svg+xml" href="{favicon}">
+  <link rel="icon" type="image/svg+xml" href="{PUBLIC_BASE_URL}/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="{PUBLIC_BASE_URL}/apple-touch-icon.png">
   <style>
     :root {{ color-scheme: light; --ink:#14233b; --muted:#60708a; --blue:#18365f; --blue-2:#254d80; --orange:#ffb23f; --paper:#fff; --wash:#f2f5fa; --line:#dce3ed; }}
     * {{ box-sizing:border-box; }}

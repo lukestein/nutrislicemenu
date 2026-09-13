@@ -154,6 +154,8 @@ class CalendarTests(unittest.TestCase):
                     "angier.ics",
                     "brown.ics",
                     "index.html",
+                    "favicon.svg",
+                    "apple-touch-icon.png",
                     "angier/index.html",
                     "brown/index.html",
                 },
