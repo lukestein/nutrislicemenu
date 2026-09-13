@@ -21,7 +21,7 @@ BROWN = {
 
 
 class SummaryTests(unittest.TestCase):
-    def test_angier_keeps_recurring_main_alternatives(self):
+    def test_angier_keeps_appealing_alternatives_but_hides_sunbutter(self):
         sections = {
             "Lunch": [
                 "Cheese Pizza",
@@ -35,8 +35,8 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(ANGIER, sections),
-            "Angier menu: cheese pizza, sunbutter & grape jelly sandwich, "
-            "cheese stuffed breadsticks, chicken caesar salad",
+            "Angier menu: cheese pizza, cheese stuffed breadsticks, "
+            "chicken caesar salad",
         )
 
     def test_brown_removes_staples_but_keeps_rotating_station_items(self):

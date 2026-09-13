@@ -27,6 +27,7 @@ SUMMARY_RULES = {
             "Breadstick",
             "Croutons",
             "Rotini Pasta",
+            "Sunbutter & Grape Jelly Sandwich",
         },
         "patterns": [],
     },
