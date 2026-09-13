@@ -82,6 +82,7 @@ class MenuPageTests(unittest.TestCase):
         self.assertNotIn("Next 7 days", page)
         self.assertIn("Cheese pizza, chicken caesar salad", page)
         self.assertNotIn("cheese 🍕, chicken caesar 🥗", page)
+        self.assertNotIn('<details class="day" open>', page)
         self.assertIn("Cheese Pizza", page)
         self.assertIn(
             "webcal://lukestein.com/nutrislicemenu/angier.ics", page
