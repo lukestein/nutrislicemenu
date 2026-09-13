@@ -89,6 +89,41 @@ class NutrisliceTests(unittest.TestCase):
 
         self.assertEqual(menu, "")
 
+    @patch("nutrislicemenu.requests.get")
+    def test_week_parser_returns_all_days(self, get):
+        response = Mock()
+        response.json.return_value = {
+            "days": [
+                {
+                    "date": "2026-09-03",
+                    "menu_items": [
+                        {"is_section_title": True, "text": "Lunch"},
+                        {"food": {"name": "Turkey Sandwich"}},
+                    ],
+                },
+                {
+                    "date": "2026-09-04",
+                    "menu_items": [
+                        {"is_section_title": True, "text": "Lunch"},
+                        {"food": {"name": "Cheese Pizza"}},
+                    ],
+                },
+            ]
+        }
+        get.return_value = response
+
+        menus = nutrislicemenu.get_menu_week(
+            "district", "school", dt.date(2026, 9, 3)
+        )
+
+        self.assertEqual(
+            menus,
+            {
+                dt.date(2026, 9, 3): {"Lunch": ["Turkey Sandwich"]},
+                dt.date(2026, 9, 4): {"Lunch": ["Cheese Pizza"]},
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

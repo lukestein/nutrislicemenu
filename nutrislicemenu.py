@@ -29,8 +29,11 @@ HIDE_SECTION_HEADERS = [
     "Create",
 ]
 
-# --- SCRIPT ---
-def get_menu_for_school(district: str, school_slug: str, date_obj: dt.date) -> str:
+
+def get_menu_week(
+    district: str, school_slug: str, date_obj: dt.date
+) -> dict[dt.date, dict[str, list[str]]]:
+    """Fetch and parse the Nutrislice week containing ``date_obj``."""
     # Use the .api subdomain which returns JSON data
     url = f"https://{district}.api.nutrislice.com/menu/api/weeks/school/{school_slug}/menu-type/lunch/{date_obj.year}/{date_obj.month}/{date_obj.day}/?format=json"
     
@@ -44,50 +47,59 @@ def get_menu_for_school(district: str, school_slug: str, date_obj: dt.date) -> s
     if not isinstance(data, dict):
         raise ValueError("Nutrislice returned an unexpected response")
 
-    target_date_str = date_obj.strftime("%Y-%m-%d")
-    
-    # Find the specific day
-    day_data = None
+    parsed_days = {}
     for day in data.get('days', []):
-        if day.get('date') == target_date_str:
-            day_data = day
-            break
-            
-    if not day_data or not day_data.get('menu_items'):
+        raw_date = day.get("date")
+        if not raw_date:
+            continue
+
+        try:
+            menu_date = dt.date.fromisoformat(raw_date)
+        except (TypeError, ValueError):
+            continue
+
+        menu_sections = {}
+        current_section = "General"
+
+        # Nutrislice returns a flat list where a header is followed by foods.
+        for item in day.get('menu_items', []):
+            if item.get('is_section_title') is True or (
+                item.get('text') and not item.get('food')
+            ):
+                raw_section = item.get('text', '') or item.get('name', '')
+                if raw_section:
+                    current_section = raw_section
+                continue
+
+            if not item.get('food'):
+                continue
+
+            food_name = item['food'].get('name')
+            if not food_name:
+                continue
+
+            station = item.get("station") or {}
+            if station.get("name"):
+                current_section = station["name"]
+
+            menu_sections.setdefault(current_section, []).append(food_name)
+
+        parsed_days[menu_date] = menu_sections
+
+    return parsed_days
+
+
+def get_menu_sections_for_school(
+    district: str, school_slug: str, date_obj: dt.date
+) -> dict[str, list[str]]:
+    """Return a structured menu for one school and date."""
+    return get_menu_week(district, school_slug, date_obj).get(date_obj, {})
+
+
+def format_menu_markdown(menu_sections: dict[str, list[str]]) -> str:
+    """Format a structured menu for the existing ntfy notification."""
+    if not menu_sections:
         return ""
-
-    menu_sections = {}
-    current_section = "General" # Default if no header is found
-    
-    # Nutrislice often returns a flat list where a "Header" item is followed by "Food" items
-    for item in day_data.get('menu_items', []):
-        
-        # 1. Check if this item is actually a Section Header
-        # "is_section_title" is the standard flag, but sometimes it's just a text field with no food
-        if item.get('is_section_title') is True or (item.get('text') and not item.get('food')):
-            raw_section = item.get('text', '') or item.get('name', '')
-            if raw_section:
-                current_section = raw_section
-            continue
-
-        # 2. Skip spacer items or images without food
-        if not item.get('food'): 
-            continue
-        
-        food_name = item['food'].get('name')
-        if not food_name: 
-            continue
-
-        # 3. Double Check: specific station metadata might override the list position
-        # If the item explicitly says it belongs to a station, use that.
-        station = item.get("station") or {}
-        if station.get("name"):
-            current_section = station["name"]
-
-        if current_section not in menu_sections:
-            menu_sections[current_section] = []
-            
-        menu_sections[current_section].append(food_name)
 
     # Format Markdown Output
     md_output = []
@@ -104,6 +116,13 @@ def get_menu_for_school(district: str, school_slug: str, date_obj: dt.date) -> s
         md_output.append("\n".join(section_md_output))
     
     return "\n\n".join(md_output)
+
+
+def get_menu_for_school(district: str, school_slug: str, date_obj: dt.date) -> str:
+    """Fetch and format one day's menu for the ntfy notification."""
+    return format_menu_markdown(
+        get_menu_sections_for_school(district, school_slug, date_obj)
+    )
 
 
 def main():
