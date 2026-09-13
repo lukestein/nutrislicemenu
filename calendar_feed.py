@@ -176,6 +176,7 @@ def serialize_calendar(
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
         f"X-WR-CALNAME:{escape_ical_text(school['name'] + ' lunch menu')}",
+        f"X-WR-TIMEZONE:{EASTERN_TIME.key}",
         "X-PUBLISHED-TTL:PT6H",
         "REFRESH-INTERVAL;VALUE=DURATION:PT6H",
     ]
