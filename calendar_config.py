@@ -37,7 +37,6 @@ SUMMARY_RULES = {
             "Classic Cheese Pizza",
             "Traditional Pepperoni Pizza",
             "Classic American Cheeseburger",
-            "Beef Hot Dog on Whole Wheat",
             "Veggie Burger",
             "Crispy Chicken Patty Sandwich",
             # Recurring On the Go offerings.
