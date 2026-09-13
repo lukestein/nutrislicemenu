@@ -2,6 +2,16 @@ name: Publish Lunch Menu Calendars
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/calendar_feeds.yml'
+      - 'calendar_config.py'
+      - 'calendar_feed.py'
+      - 'menu_common.py'
+      - 'nutrislicemenu.py'
+      - 'requirements.txt'
   schedule:
     # Refresh the coming weeks Wednesday-Sunday, when new menus and revisions
     # are most useful. The non-zero minute reduces runner delays.
