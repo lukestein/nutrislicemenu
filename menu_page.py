@@ -84,7 +84,6 @@ def _day_card(
     menu_date: dt.date,
     menu_sections: dict[str, list[str]],
     compact_summary: str,
-    open_by_default: bool,
 ) -> str:
     day_label = menu_date.strftime("%A")
     date_label = f"{menu_date:%b} {menu_date.day}"
@@ -100,9 +99,8 @@ def _day_card(
         </div>"""
 
     compact_summary = format_web_summary(compact_summary, school["name"])
-    open_attribute = " open" if open_by_default else ""
     return f"""
-        <details class="day"{open_attribute}>
+        <details class="day">
           <summary>
             <span class="day-name"><strong>{day_label}</strong><span>{date_label}</span></span>
             <span class="day-summary">{html.escape(compact_summary)}</span>
@@ -158,7 +156,6 @@ def render_menu_page(
                 menu_date,
                 menus.get(menu_date, {}),
                 summary_builder(school, menus.get(menu_date, {})),
-                menu_date == school_dates[0],
             )
             for menu_date in school_dates
         )
