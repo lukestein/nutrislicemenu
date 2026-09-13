@@ -13,9 +13,12 @@ on:
       - 'nutrislicemenu.py'
       - 'requirements.txt'
   schedule:
-    # Refresh the coming weeks Wednesday-Sunday, when new menus and revisions
-    # are most useful. The non-zero minute reduces runner delays.
-    - cron: '43 11 * 1-6,9-12 0,3-6'
+    # Refresh every school-year morning so the rolling seven-day page reflects
+    # late menu changes. Extra Wednesday/Thursday runs catch next-week menus
+    # soon after they are commonly published.
+    - cron: '43 6 * 1-6,9-12 *'
+      timezone: 'America/New_York'
+    - cron: '43 16 * 1-6,9-12 3-4'
       timezone: 'America/New_York'
 
 concurrency:
