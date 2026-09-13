@@ -75,3 +75,10 @@ SUMMARY_CAPITALIZATIONS = {
     "blt": "BLT",
     "pb&j": "PB&J",
 }
+
+
+SUMMARY_EMOJI_REPLACEMENTS = [
+    (r"\b(?:beef )?hot dog(?: on whole wheat)?\b", "🌭"),
+    (r"\bpizza\b", "🍕"),
+    (r"\bsalad\b", "🥗"),
+]

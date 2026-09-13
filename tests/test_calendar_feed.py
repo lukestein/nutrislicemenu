@@ -35,8 +35,7 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(ANGIER, sections),
-            "Angier menu: cheese pizza, cheese stuffed breadsticks, "
-            "chicken caesar salad",
+            "Angier: cheese 🍕, cheese stuffed breadsticks, chicken caesar 🥗",
         )
 
     def test_brown_removes_staples_but_keeps_rotating_station_items(self):
@@ -52,8 +51,27 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(BROWN, sections),
-            "Brown menu: baked falafel flatbread, margherita pizza, "
+            "Brown: baked falafel flatbread, margherita 🍕, "
             "BBQ cheddar chicken sandwich",
+        )
+
+    def test_compact_names_use_food_emoji(self):
+        self.assertEqual(
+            calendar_feed.compact_food_name("Beef Hot Dog on Whole Wheat"), "🌭"
+        )
+        self.assertEqual(
+            calendar_feed.compact_food_name("Chicken Pizza Salad"),
+            "chicken 🍕 🥗",
+        )
+
+    def test_summary_does_not_truncate_at_four_short_items(self):
+        sections = {
+            "Lunch": ["Tacos", "Pizza", "Pasta", "Panini", "Black Bean Burger"]
+        }
+
+        self.assertEqual(
+            calendar_feed.event_summary(ANGIER, sections),
+            "Angier: tacos, 🍕, pasta, panini, black bean burger",
         )
 
 
@@ -95,7 +113,7 @@ class CalendarTests(unittest.TestCase):
         self.assertIn("DTSTART;VALUE=DATE:20260914", calendar)
         self.assertIn("DTEND;VALUE=DATE:20260915", calendar)
         self.assertIn("TRANSP:TRANSPARENT", calendar)
-        self.assertIn("SUMMARY:Angier menu: cheese pizza", calendar)
+        self.assertIn("SUMMARY:Angier: cheese 🍕", calendar)
         self.assertNotIn("Weekend Pizza", calendar)
         self.assertTrue(calendar.endswith("END:VCALENDAR\r\n"))
 

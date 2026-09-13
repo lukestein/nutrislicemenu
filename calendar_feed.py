@@ -11,6 +11,7 @@ from calendar_config import (
     COMMON_SUMMARY_EXCLUSION_PATTERNS,
     SUMMARY_ALIASES,
     SUMMARY_CAPITALIZATIONS,
+    SUMMARY_EMOJI_REPLACEMENTS,
     SUMMARY_RULES,
 )
 from menu_common import EASTERN_TIME
@@ -24,7 +25,6 @@ from nutrislicemenu import (
 
 CALENDAR_DOMAIN = "nutrislicemenu.lukestein"
 DEFAULT_WEEKS = 4
-MAX_SUMMARY_ITEMS = 4
 MAX_SUMMARY_LENGTH = 140
 
 
@@ -69,6 +69,8 @@ def compact_food_name(food_name: str) -> str:
             compact,
             flags=re.IGNORECASE,
         )
+    for pattern, replacement in SUMMARY_EMOJI_REPLACEMENTS:
+        compact = re.sub(pattern, replacement, compact, flags=re.IGNORECASE)
     return compact
 
 
@@ -88,16 +90,14 @@ def event_summary(
                 foods.append(compact)
                 seen.add(key)
 
-    prefix = f"{school['name']} menu"
+    prefix = school["name"]
     if not foods:
         return prefix
 
     included = []
     for food in foods:
         candidate = f"{prefix}: {', '.join(included + [food])}"
-        if included and (
-            len(included) >= MAX_SUMMARY_ITEMS or len(candidate) > MAX_SUMMARY_LENGTH
-        ):
+        if included and len(candidate) > MAX_SUMMARY_LENGTH:
             break
         included.append(food)
 
