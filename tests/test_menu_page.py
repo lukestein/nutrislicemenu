@@ -2,7 +2,7 @@ import datetime as dt
 import unittest
 
 from calendar_feed import event_summary
-from menu_page import displayed_menu_dates, render_menu_page
+from menu_page import displayed_menu_dates, format_web_summary, render_menu_page
 
 
 SCHOOLS = [
@@ -52,8 +52,10 @@ class MenuPageTests(unittest.TestCase):
             event_summary,
         )
 
-        self.assertIn("Next 7 days · September 13–20, 2026", page)
-        self.assertIn("cheese 🍕, chicken caesar 🥗", page)
+        self.assertIn("September 13–20, 2026", page)
+        self.assertNotIn("Next 7 days", page)
+        self.assertIn("Cheese pizza, chicken caesar salad", page)
+        self.assertNotIn("cheese 🍕, chicken caesar 🥗", page)
         self.assertIn("Cheese Pizza", page)
         self.assertIn(
             "webcal://lukestein.com/nutrislicemenu/angier.ics", page
@@ -61,6 +63,14 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("Google / Android", page)
         self.assertIn("No menu posted", page)
         self.assertNotIn("Angier: cheese", page)
+
+    def test_web_summary_uses_words_and_sentence_capitalization(self):
+        self.assertEqual(
+            format_web_summary(
+                "Angier: 🌭, cheese 🍕, chicken caesar 🥗", "Angier"
+            ),
+            "Hot dog, cheese pizza, chicken caesar salad",
+        )
 
     def test_page_escapes_menu_content(self):
         menus = {

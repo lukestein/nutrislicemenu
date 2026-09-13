@@ -12,6 +12,11 @@ from nutrislicemenu import HIDE_SECTION_HEADERS, IGNORED_SECTIONS
 
 PUBLIC_BASE_URL = "https://lukestein.com/nutrislicemenu"
 GOOGLE_ADD_URL = "https://calendar.google.com/calendar/u/0/r/settings/addbyurl"
+WEB_SUMMARY_REPLACEMENTS = {
+    "🌭": "hot dog",
+    "🍕": "pizza",
+    "🥗": "salad",
+}
 
 
 def displayed_menu_dates(today: dt.date) -> list[dt.date]:
@@ -30,6 +35,16 @@ def format_date_range(first_date: dt.date, last_date: dt.date) -> str:
         f"{first_date:%B} {first_date.day}–"
         f"{last_date:%B} {last_date.day}, {last_date.year}"
     )
+
+
+def format_web_summary(compact_summary: str, school_name: str) -> str:
+    """Convert a compact calendar title into a sentence-style web summary."""
+    prefix = f"{school_name}: "
+    if compact_summary.startswith(prefix):
+        compact_summary = compact_summary[len(prefix) :]
+    for emoji, food_name in WEB_SUMMARY_REPLACEMENTS.items():
+        compact_summary = compact_summary.replace(emoji, food_name)
+    return compact_summary[:1].upper() + compact_summary[1:]
 
 
 def _menu_sections(menu_sections: dict[str, list[str]]) -> str:
@@ -65,9 +80,7 @@ def _day_card(
           <span class="empty-label">No menu posted</span>
         </div>"""
 
-    prefix = f"{school['name']}: "
-    if compact_summary.startswith(prefix):
-        compact_summary = compact_summary[len(prefix) :]
+    compact_summary = format_web_summary(compact_summary, school["name"])
     open_attribute = " open" if open_by_default else ""
     return f"""
         <details class="day"{open_attribute}>
@@ -236,7 +249,7 @@ def render_menu_page(
 <body>
   <header class="top">
     <div class="top-row">
-      <div><h1>School lunch menus</h1><p class="week">Next 7 days · {html.escape(format_date_range(today, today + dt.timedelta(days=7)))}</p></div>
+      <div><h1>School lunch menus</h1><p class="week">{html.escape(format_date_range(today, today + dt.timedelta(days=7)))}</p></div>
       <nav class="school-nav" aria-label="Schools"><a href="#angier">Angier</a><a href="#brown">Brown</a></nav>
     </div>
   </header>
