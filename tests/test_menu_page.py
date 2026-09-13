@@ -89,6 +89,7 @@ class MenuPageTests(unittest.TestCase):
         )
         self.assertIn("Apple Calendar", page)
         self.assertIn("Google/Android", page)
+        self.assertNotIn('<p class="eyebrow">Lunch menu</p>', page)
         self.assertIn(
             'href="https://lukestein.com/nutrislicemenu/favicon.svg"', page
         )

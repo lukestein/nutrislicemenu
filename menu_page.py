@@ -172,7 +172,7 @@ def render_menu_page(
         else:
             school_heading = f"""
         <div class="school-heading">
-          <div><p class="eyebrow">Lunch menu</p><h2>{html.escape(name)}</h2></div>
+          <h2>{html.escape(name)}</h2>
           {subscribe_actions}
         </div>"""
         school_sections.append(

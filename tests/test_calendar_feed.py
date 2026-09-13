@@ -44,6 +44,7 @@ class SummaryTests(unittest.TestCase):
             "2Mato": ["Classic Cheese Pizza", "Margherita Pizza"],
             "Grill": [
                 "Classic American Cheeseburger",
+                "Beef Hot Dog on Whole Wheat",
                 "BBQ Cheddar Chicken Sandwich",
                 "Curly Fries",
             ],
@@ -52,7 +53,7 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(
             calendar_feed.event_summary(BROWN, sections),
             "Brown: baked falafel flatbread, margherita 🍕, "
-            "BBQ cheddar chicken sandwich",
+            "🌭, BBQ cheddar chicken sandwich",
         )
 
     def test_compact_names_use_food_emoji(self):
