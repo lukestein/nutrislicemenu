@@ -9,6 +9,7 @@ on:
       - '.github/workflows/calendar_feeds.yml'
       - 'calendar_config.py'
       - 'calendar_feed.py'
+      - 'menu_page.py'
       - 'menu_common.py'
       - 'nutrislicemenu.py'
       - 'requirements.txt'
