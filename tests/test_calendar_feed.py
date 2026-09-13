@@ -146,7 +146,9 @@ class CalendarTests(unittest.TestCase):
             )
 
             self.assertEqual(get_menu_week.call_count, 4)
-            self.assertEqual({path.name for path in paths}, {"angier.ics", "brown.ics"})
+            self.assertEqual(
+                {path.name for path in paths}, {"angier.ics", "brown.ics", "index.html"}
+            )
             self.assertTrue(all(path.exists() for path in paths))
 
 

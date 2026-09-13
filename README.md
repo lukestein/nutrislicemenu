@@ -16,6 +16,10 @@ all-day event. Event titles contain a compact selection of the day's main
 choices, while event descriptions contain the sectioned menu and a link to
 Nutrislice.
 
+The Pages site at <https://lukestein.com/nutrislicemenu/> shows the next seven
+days of school menus in a fast, phone-friendly format and provides subscription
+instructions for Apple Calendar, Google Calendar, and Android.
+
 The `Publish Lunch Menu Calendars` workflow deploys the generated files as this
 repository's own GitHub Pages artifact. It does not commit to or modify the
 `lukestein.github.io` repository. Once GitHub Pages is enabled with **GitHub

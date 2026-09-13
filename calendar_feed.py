@@ -15,6 +15,7 @@ from calendar_config import (
     SUMMARY_RULES,
 )
 from menu_common import EASTERN_TIME
+from menu_page import render_menu_page
 from nutrislicemenu import (
     HIDE_SECTION_HEADERS,
     IGNORED_SECTIONS,
@@ -219,11 +220,13 @@ def generate_calendars(
     generated_at = dt.datetime.now(dt.timezone.utc)
     output_dir.mkdir(parents=True, exist_ok=True)
     output_paths = []
+    menus_by_school = {}
 
     for school in SCHOOLS:
         menus = {}
         for week_start in week_starts(today, number_of_weeks):
             menus.update(get_menu_week(school["district"], school["slug"], week_start))
+        menus_by_school[school["slug"]] = menus
 
         output_path = output_dir / f"{school['name'].lower()}.ics"
         output_path.write_text(
@@ -231,6 +234,14 @@ def generate_calendars(
         )
         output_paths.append(output_path)
         print(f"Wrote {output_path} with {sum(bool(v) for v in menus.values())} menus")
+
+    page_path = output_dir / "index.html"
+    page_path.write_text(
+        render_menu_page(SCHOOLS, menus_by_school, today, generated_at, event_summary),
+        encoding="utf-8",
+    )
+    output_paths.append(page_path)
+    print(f"Wrote {page_path}")
 
     return output_paths
 
