@@ -17,24 +17,43 @@ WEB_SUMMARY_REPLACEMENTS = {
     "🍕": "pizza",
     "🥗": "salad",
 }
+MENU_DAY_ROLLOVER_HOUR = 13
 
 
-def displayed_menu_dates(today: dt.date) -> list[dt.date]:
-    """Return school days from today through seven calendar days ahead."""
+def displayed_menu_dates(
+    today: dt.date, generated_at: dt.datetime
+) -> list[dt.date]:
+    """Return eligible school days in the rolling menu window."""
+    local_time = generated_at.astimezone(EASTERN_TIME)
+    first_date = today
+    if local_time.hour >= MENU_DAY_ROLLOVER_HOUR:
+        first_date += dt.timedelta(days=1)
     return [
-        today + dt.timedelta(days=offset)
+        first_date + dt.timedelta(days=offset)
         for offset in range(8)
-        if (today + dt.timedelta(days=offset)).weekday() < 5
+        if (first_date + dt.timedelta(days=offset)).weekday() < 5
     ]
 
 
 def format_date_range(first_date: dt.date, last_date: dt.date) -> str:
-    if first_date.month == last_date.month:
+    if first_date == last_date:
+        return f"{first_date:%B} {first_date.day}, {first_date.year}"
+    if first_date.year == last_date.year and first_date.month == last_date.month:
         return f"{first_date:%B} {first_date.day}–{last_date.day}, {last_date.year}"
+    if first_date.year == last_date.year:
+        return (
+            f"{first_date:%B} {first_date.day}–"
+            f"{last_date:%B} {last_date.day}, {last_date.year}"
+        )
     return (
-        f"{first_date:%B} {first_date.day}–"
+        f"{first_date:%B} {first_date.day}, {first_date.year}–"
         f"{last_date:%B} {last_date.day}, {last_date.year}"
     )
+
+
+def has_menu(menu_sections: dict[str, list[str]]) -> bool:
+    """Return whether a day contains at least one posted food item."""
+    return any(menu_sections.values())
 
 
 def format_web_summary(compact_summary: str, school_name: str) -> str:
@@ -73,7 +92,7 @@ def _day_card(
         f"https://{school['district']}.nutrislice.com/menu/"
         f"{school['slug']}/lunch/{menu_date.isoformat()}"
     )
-    if not any(menu_sections.values()):
+    if not has_menu(menu_sections):
         return f"""
         <div class="day empty">
           <div class="day-name"><strong>{day_label}</strong><span>{date_label}</span></div>
@@ -104,7 +123,20 @@ def render_menu_page(
     summary_builder: Callable[[dict[str, str], dict[str, list[str]]], str],
 ) -> str:
     """Return a self-contained weekly menu and subscription page."""
-    dates = displayed_menu_dates(today)
+    eligible_dates = displayed_menu_dates(today, generated_at)
+    dates = [
+        menu_date
+        for menu_date in eligible_dates
+        if any(
+            has_menu(menus_by_school.get(school["slug"], {}).get(menu_date, {}))
+            for school in schools
+        )
+    ]
+    date_range_label = (
+        format_date_range(dates[0], dates[-1])
+        if dates
+        else "No upcoming menus posted"
+    )
     school_sections = []
     dialogs = []
 
@@ -115,20 +147,21 @@ def render_menu_page(
         https_url = f"{PUBLIC_BASE_URL}/{filename}"
         webcal_url = https_url.replace("https://", "webcal://", 1)
         menus = menus_by_school.get(slug, {})
-        default_date = next(
-            (menu_date for menu_date in dates if any(menus.get(menu_date, {}).values())),
-            dates[0],
-        )
+        school_dates = [
+            menu_date for menu_date in dates if has_menu(menus.get(menu_date, {}))
+        ]
         days = "".join(
             _day_card(
                 school,
                 menu_date,
                 menus.get(menu_date, {}),
                 summary_builder(school, menus.get(menu_date, {})),
-                menu_date == default_date,
+                menu_date == school_dates[0],
             )
-            for menu_date in dates
+            for menu_date in school_dates
         )
+        if not school_dates:
+            days = '<p class="school-empty">No upcoming menus are posted.</p>'
         school_sections.append(
             f"""
       <section class="school" id="{html.escape(name.lower())}">
@@ -202,6 +235,7 @@ def render_menu_page(
     .button.secondary {{ background:#fff; color:var(--blue); }}
     .button:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
     .days {{ padding:0 .55rem .65rem; }}
+    .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
     .day {{ border-bottom:1px solid var(--line); }}
     .day:last-child {{ border-bottom:0; }}
     details.day summary {{ display:grid; grid-template-columns:5rem 1fr 1rem; gap:.75rem; align-items:center; min-height:4.35rem; padding:.7rem .5rem; cursor:pointer; list-style:none; }}
@@ -249,7 +283,7 @@ def render_menu_page(
 <body>
   <header class="top">
     <div class="top-row">
-      <div><h1>School lunch menus</h1><p class="week">{html.escape(format_date_range(today, today + dt.timedelta(days=7)))}</p></div>
+      <div><h1>School lunch menus</h1><p class="week">{html.escape(date_range_label)}</p></div>
       <nav class="school-nav" aria-label="Schools"><a href="#angier">Angier</a><a href="#brown">Brown</a></nav>
     </div>
   </header>
