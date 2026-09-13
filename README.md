@@ -21,8 +21,8 @@ repository's own GitHub Pages artifact. It does not commit to or modify the
 `lukestein.github.io` repository. Once GitHub Pages is enabled with **GitHub
 Actions** as its source, the subscription URLs are:
 
-- <https://lukestein.github.io/nutrislicemenu/angier.ics>
-- <https://lukestein.github.io/nutrislicemenu/brown.ics>
+- <https://lukestein.com/nutrislicemenu/angier.ics>
+- <https://lukestein.com/nutrislicemenu/brown.ics>
 
 Compact-title exclusions and aliases are intentionally kept in
 `calendar_config.py` so they can be tuned as Nutrislice item names change.
