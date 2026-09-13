@@ -168,8 +168,8 @@ def render_menu_page(
         <div class="school-heading">
           <div><p class="eyebrow">Lunch menu</p><h2>{html.escape(name)}</h2></div>
           <div class="subscribe-actions">
-            <a class="button apple" href="{html.escape(webcal_url)}"> Add to Apple</a>
-            <button class="button secondary" type="button" data-open-dialog="google-{html.escape(name.lower())}">Google / Android</button>
+            <a class="button apple" href="{html.escape(webcal_url)}">Apple Calendar</a>
+            <button class="button secondary" type="button" data-open-dialog="google-{html.escape(name.lower())}">Google/Android</button>
           </div>
         </div>
         <div class="days">{days}</div>
@@ -230,10 +230,10 @@ def render_menu_page(
     .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:.65rem; padding:.72rem .85rem; border-bottom:1px solid var(--line); }}
     .eyebrow {{ margin:0 0 .08rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }}
     h2 {{ margin:0; font-size:1.28rem; line-height:1.05; }}
-    .subscribe-actions {{ display:flex; flex-wrap:nowrap; justify-content:flex-end; gap:.35rem; }}
+    .subscribe-actions {{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); flex:0 1 12.5rem; width:12.5rem; gap:.35rem; }}
     .button {{ appearance:none; border:1px solid var(--blue); border-radius:9px; background:var(--blue); color:#fff; padding:.58rem .72rem; font:inherit; font-size:.82rem; font-weight:750; line-height:1.15; text-decoration:none; cursor:pointer; text-align:center; }}
     .button.secondary {{ background:#fff; color:var(--blue); }}
-    .subscribe-actions .button {{ min-height:2.25rem; padding:.4rem .5rem; border-color:#cad5e4; background:#f7f9fc; color:#36577f; font-size:.75rem; font-weight:650; white-space:nowrap; }}
+    .subscribe-actions .button {{ display:flex; align-items:center; justify-content:center; min-width:0; min-height:2.25rem; padding:.4rem .4rem; border-color:#cad5e4; background:#f7f9fc; color:#36577f; font-size:.75rem; font-weight:650; white-space:nowrap; }}
     .subscribe-actions .button:hover {{ border-color:#9cafc7; background:#eef3f8; color:var(--blue); }}
     .button:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
     .days {{ padding:0 .55rem .65rem; }}

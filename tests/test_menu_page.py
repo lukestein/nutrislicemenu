@@ -86,7 +86,8 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn(
             "webcal://lukestein.com/nutrislicemenu/angier.ics", page
         )
-        self.assertIn("Google / Android", page)
+        self.assertIn("Apple Calendar", page)
+        self.assertIn("Google/Android", page)
         self.assertNotIn("Angier: cheese", page)
 
     def test_page_has_clear_empty_state_when_no_menus_are_posted(self):
