@@ -219,20 +219,22 @@ def render_menu_page(
     html {{ scroll-behavior:smooth; }}
     body {{ margin:0; background:var(--wash); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:16px; line-height:1.45; }}
     a {{ color:inherit; }}
-    .top {{ background:linear-gradient(135deg,var(--blue),var(--blue-2)); color:#fff; padding:1.4rem max(1rem,calc((100vw - 70rem)/2)); }}
-    .top-row {{ display:flex; align-items:end; justify-content:space-between; gap:1rem; }}
-    h1 {{ margin:0; font-size:clamp(1.55rem,5vw,2.35rem); line-height:1.1; letter-spacing:-.025em; }}
-    .week {{ margin:.35rem 0 0; color:#d9e6f7; font-size:.96rem; }}
+    .top {{ background:linear-gradient(135deg,var(--blue),var(--blue-2)); color:#fff; padding:.85rem max(1rem,calc((100vw - 70rem)/2)); }}
+    .top-row {{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; }}
+    h1 {{ margin:0; font-size:clamp(1.35rem,4.5vw,2rem); line-height:1.08; letter-spacing:-.025em; }}
+    .week {{ margin:.2rem 0 0; color:#d9e6f7; font-size:.88rem; }}
     .school-nav {{ display:flex; gap:.45rem; }}
-    .school-nav a {{ padding:.48rem .78rem; border:1px solid #ffffff55; border-radius:999px; text-decoration:none; font-weight:650; }}
+    .school-nav a {{ padding:.38rem .62rem; border:1px solid #ffffff55; border-radius:999px; text-decoration:none; font-size:.82rem; font-weight:650; }}
     main {{ width:min(70rem,100%); margin:0 auto; padding:1rem; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; align-items:start; }}
     .school {{ background:var(--paper); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 10px 28px #243a5a0d; }}
-    .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem 1.05rem; border-bottom:1px solid var(--line); }}
-    .eyebrow {{ margin:0 0 .12rem; color:var(--muted); font-size:.73rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }}
-    h2 {{ margin:0; font-size:1.45rem; line-height:1.1; }}
-    .subscribe-actions {{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:.45rem; }}
+    .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:.65rem; padding:.72rem .85rem; border-bottom:1px solid var(--line); }}
+    .eyebrow {{ margin:0 0 .08rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }}
+    h2 {{ margin:0; font-size:1.28rem; line-height:1.05; }}
+    .subscribe-actions {{ display:flex; flex-wrap:nowrap; justify-content:flex-end; gap:.35rem; }}
     .button {{ appearance:none; border:1px solid var(--blue); border-radius:9px; background:var(--blue); color:#fff; padding:.58rem .72rem; font:inherit; font-size:.82rem; font-weight:750; line-height:1.15; text-decoration:none; cursor:pointer; text-align:center; }}
     .button.secondary {{ background:#fff; color:var(--blue); }}
+    .subscribe-actions .button {{ min-height:2.25rem; padding:.4rem .5rem; border-color:#cad5e4; background:#f7f9fc; color:#36577f; font-size:.75rem; font-weight:650; white-space:nowrap; }}
+    .subscribe-actions .button:hover {{ border-color:#9cafc7; background:#eef3f8; color:var(--blue); }}
     .button:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
     .days {{ padding:0 .55rem .65rem; }}
     .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
@@ -265,17 +267,18 @@ def render_menu_page(
     .dialog-actions {{ display:flex; flex-wrap:wrap; gap:.55rem; margin:1rem 0; }}
     dialog code {{ display:block; overflow-wrap:anywhere; padding:.65rem; border-radius:8px; background:var(--wash); color:#40516a; font-size:.75rem; }}
     @media (max-width:760px) {{
-      .top {{ padding-top:1.05rem; }}
-      .top-row {{ align-items:start; flex-direction:column; }}
-      main {{ grid-template-columns:1fr; padding:.75rem; }}
-      .school-heading {{ align-items:flex-start; flex-direction:column; }}
-      .subscribe-actions {{ justify-content:flex-start; width:100%; }}
-      .button {{ flex:1; }}
+      main {{ grid-template-columns:1fr; padding:.6rem; gap:.6rem; }}
     }}
     @media (max-width:420px) {{
+      .top {{ padding:.72rem .75rem; }}
+      .top-row {{ gap:.5rem; }}
+      .school-nav {{ gap:.3rem; }}
+      .school-nav a {{ padding:.32rem .48rem; }}
+      .school-heading {{ padding:.65rem .7rem; }}
+      .subscribe-actions {{ gap:.25rem; }}
+      .subscribe-actions .button {{ padding:.36rem .4rem; font-size:.7rem; }}
       details.day summary {{ grid-template-columns:5.25rem 1fr .8rem; gap:.5rem; }}
       .day-details {{ margin:0 .25rem .75rem; }}
-      .school-nav a {{ padding:.42rem .65rem; }}
     }}
     @media (prefers-reduced-motion:reduce) {{ html {{ scroll-behavior:auto; }} .chevron {{ transition:none; }} }}
   </style>
