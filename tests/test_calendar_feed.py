@@ -45,6 +45,7 @@ class SummaryTests(unittest.TestCase):
             "Grill": [
                 "Classic American Cheeseburger",
                 "Beef Hot Dog on Whole Wheat",
+                "Black Bean Burger",
                 "BBQ Cheddar Chicken Sandwich",
                 "Curly Fries",
             ],
