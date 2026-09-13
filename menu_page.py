@@ -123,6 +123,7 @@ def render_menu_page(
     summary_builder: Callable[[dict[str, str], dict[str, list[str]]], str],
 ) -> str:
     """Return a self-contained weekly menu and subscription page."""
+    standalone_school = schools[0] if len(schools) == 1 else None
     eligible_dates = displayed_menu_dates(today, generated_at)
     dates = [
         menu_date
@@ -139,6 +140,7 @@ def render_menu_page(
     )
     school_sections = []
     dialogs = []
+    header_actions = ""
 
     for school in schools:
         slug = school["slug"]
@@ -162,16 +164,24 @@ def render_menu_page(
         )
         if not school_dates:
             days = '<p class="school-empty">No upcoming menus are posted.</p>'
-        school_sections.append(
-            f"""
-      <section class="school" id="{html.escape(name.lower())}">
-        <div class="school-heading">
-          <div><p class="eyebrow">Lunch menu</p><h2>{html.escape(name)}</h2></div>
+        subscribe_actions = f"""
           <div class="subscribe-actions">
             <a class="button apple" href="{html.escape(webcal_url)}">Apple Calendar</a>
             <button class="button secondary" type="button" data-open-dialog="google-{html.escape(name.lower())}">Google/Android</button>
-          </div>
-        </div>
+          </div>"""
+        school_heading = ""
+        if standalone_school:
+            header_actions = subscribe_actions
+        else:
+            school_heading = f"""
+        <div class="school-heading">
+          <div><p class="eyebrow">Lunch menu</p><h2>{html.escape(name)}</h2></div>
+          {subscribe_actions}
+        </div>"""
+        school_sections.append(
+            f"""
+      <section class="school" id="{html.escape(name.lower())}">
+        {school_heading}
         <div class="days">{days}</div>
       </section>"""
         )
@@ -203,6 +213,21 @@ def render_menu_page(
         "%3Ccircle cx='32' cy='32' r='17' fill='%23fff'/%3E"
         "%3Ccircle cx='32' cy='32' r='10' fill='%23ffb23f'/%3E%3C/svg%3E"
     )
+    if standalone_school:
+        school_name = standalone_school["name"]
+        document_title = f"{school_name} lunch menu"
+        description = f"Upcoming {school_name} school lunch menus and calendar subscription."
+        header_content = f"""
+      <div><p class="eyebrow top-eyebrow">Lunch menu</p><h1>{html.escape(school_name)}</h1><p class="week">{html.escape(date_range_label)}</p></div>
+      {header_actions}"""
+        main_class = ' class="single-school"'
+    else:
+        document_title = "Newton school lunch menus"
+        description = "Upcoming Angier and Brown school lunch menus and calendar subscriptions."
+        header_content = f"""
+      <div><h1>School lunch menus</h1><p class="week">{html.escape(date_range_label)}</p></div>
+      <nav class="school-nav" aria-label="Schools"><a href="#angier">Angier</a><a href="#brown">Brown</a></nav>"""
+        main_class = ""
 
     return f"""<!doctype html>
 <html lang="en">
@@ -210,8 +235,8 @@ def render_menu_page(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#18365f">
-  <meta name="description" content="This week's Angier and Brown school lunch menus and calendar subscriptions.">
-  <title>Newton school lunch menus</title>
+  <meta name="description" content="{html.escape(description)}">
+  <title>{html.escape(document_title)}</title>
   <link rel="icon" type="image/svg+xml" href="{favicon}">
   <style>
     :root {{ color-scheme: light; --ink:#14233b; --muted:#60708a; --blue:#18365f; --blue-2:#254d80; --orange:#ffb23f; --paper:#fff; --wash:#f2f5fa; --line:#dce3ed; }}
@@ -223,9 +248,11 @@ def render_menu_page(
     .top-row {{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; }}
     h1 {{ margin:0; font-size:clamp(1.35rem,4.5vw,2rem); line-height:1.08; letter-spacing:-.025em; }}
     .week {{ margin:.2rem 0 0; color:#d9e6f7; font-size:.88rem; }}
+    .top-eyebrow {{ color:#bcd0e9; }}
     .school-nav {{ display:flex; gap:.45rem; }}
     .school-nav a {{ padding:.38rem .62rem; border:1px solid #ffffff55; border-radius:999px; text-decoration:none; font-size:.82rem; font-weight:650; }}
     main {{ width:min(70rem,100%); margin:0 auto; padding:1rem; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; align-items:start; }}
+    main.single-school {{ grid-template-columns:minmax(0,38rem); justify-content:center; }}
     .school {{ background:var(--paper); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 10px 28px #243a5a0d; }}
     .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:.65rem; padding:.72rem .85rem; border-bottom:1px solid var(--line); }}
     .eyebrow {{ margin:0 0 .08rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }}
@@ -235,6 +262,8 @@ def render_menu_page(
     .button.secondary {{ background:#fff; color:var(--blue); }}
     .subscribe-actions .button {{ display:flex; align-items:center; justify-content:center; min-width:0; min-height:2.25rem; padding:.4rem .4rem; border-color:#cad5e4; background:#f7f9fc; color:#36577f; font-size:.75rem; font-weight:650; white-space:nowrap; }}
     .subscribe-actions .button:hover {{ border-color:#9cafc7; background:#eef3f8; color:var(--blue); }}
+    .top .subscribe-actions .button {{ border-color:#ffffff55; background:#ffffff12; color:#fff; }}
+    .top .subscribe-actions .button:hover {{ border-color:#ffffff88; background:#ffffff20; color:#fff; }}
     .button:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
     .days {{ padding:0 .55rem .65rem; }}
     .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
@@ -286,11 +315,10 @@ def render_menu_page(
 <body>
   <header class="top">
     <div class="top-row">
-      <div><h1>School lunch menus</h1><p class="week">{html.escape(date_range_label)}</p></div>
-      <nav class="school-nav" aria-label="Schools"><a href="#angier">Angier</a><a href="#brown">Brown</a></nav>
+      {header_content}
     </div>
   </header>
-  <main>{''.join(school_sections)}</main>
+  <main{main_class}>{''.join(school_sections)}</main>
   <footer>Menus are provided by Newton Public Schools via Nutrislice. Updated {html.escape(updated_label)} ET.</footer>
   {''.join(dialogs)}
   <script>

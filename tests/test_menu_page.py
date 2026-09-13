@@ -103,6 +103,27 @@ class MenuPageTests(unittest.TestCase):
         self.assertEqual(page.count("No upcoming menus are posted."), 2)
         self.assertNotIn("December 24–31, 2026", page)
 
+    def test_single_school_page_has_simplified_header(self):
+        menus = {
+            "angier-elementary": {
+                dt.date(2026, 9, 14): {"Lunch": ["Cheese Pizza"]}
+            }
+        }
+        page = render_menu_page(
+            SCHOOLS[:1],
+            menus,
+            dt.date(2026, 9, 14),
+            dt.datetime(2026, 9, 14, 16, tzinfo=dt.timezone.utc),
+            event_summary,
+        )
+
+        self.assertIn("<title>Angier lunch menu</title>", page)
+        self.assertIn('<main class="single-school">', page)
+        self.assertIn("<h1>Angier</h1>", page)
+        self.assertNotIn('<nav class="school-nav"', page)
+        self.assertNotIn("<h2>Angier</h2>", page)
+        self.assertNotIn("Brown", page)
+
     def test_web_summary_uses_words_and_sentence_capitalization(self):
         self.assertEqual(
             format_web_summary(

@@ -23,6 +23,11 @@ of the page shortly after 1 PM America/New_York time. If no upcoming menus are
 posted during a school break, the page shows a clear empty state while the
 calendar feeds remain valid.
 
+Single-school versions are available at:
+
+- <https://lukestein.com/nutrislicemenu/angier/>
+- <https://lukestein.com/nutrislicemenu/brown/>
+
 The `Publish Lunch Menu Calendars` workflow deploys the generated files as this
 repository's own GitHub Pages artifact. It does not commit to or modify the
 `lukestein.github.io` repository. Once GitHub Pages is enabled with **GitHub

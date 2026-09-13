@@ -243,6 +243,18 @@ def generate_calendars(
     output_paths.append(page_path)
     print(f"Wrote {page_path}")
 
+    for school in SCHOOLS:
+        school_page_path = output_dir / school["name"].lower() / "index.html"
+        school_page_path.parent.mkdir(parents=True, exist_ok=True)
+        school_page_path.write_text(
+            render_menu_page(
+                [school], menus_by_school, today, generated_at, event_summary
+            ),
+            encoding="utf-8",
+        )
+        output_paths.append(school_page_path)
+        print(f"Wrote {school_page_path}")
+
     return output_paths
 
 
