@@ -104,6 +104,7 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("#brown { --school-accent:#8a623f;", page)
         self.assertIn("background:var(--school-tint);", page)
         self.assertIn("content:attr(data-short);", page)
+        self.assertIn("content:attr(data-short); font-size:1.1rem;", page)
         self.assertIn(
             'href="https://lukestein.com/nutrislicemenu/favicon.svg"', page
         )
