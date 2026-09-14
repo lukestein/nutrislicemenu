@@ -110,6 +110,8 @@ class MenuPageTests(unittest.TestCase):
         )
         self.assertIn(".chevron { justify-self:end;", page)
         self.assertIn("@media print {", page)
+        self.assertIn(".day-name strong::after { content:none; }", page)
+        self.assertIn("grid-template-columns:1in 1fr;", page)
         self.assertIn(
             ".school-nav, .school-actions, .chevron, dialog, .source-link "
             "{ display:none !important; }",

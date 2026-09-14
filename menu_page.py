@@ -361,8 +361,9 @@ def render_menu_page(
       .days {{ padding:0 .1in .08in; }}
       .day {{ border-bottom:.6pt solid #999; break-inside:avoid; }}
       .day.week-break {{ margin-top:.08in; border-top:2pt solid #000; }}
-      details.day summary {{ grid-template-columns:.8in 1fr; gap:.08in; min-height:0; padding:.08in .04in; cursor:default; }}
+      details.day summary {{ grid-template-columns:1in 1fr; gap:.08in; min-height:0; padding:.08in .04in; cursor:default; }}
       .day-name strong {{ font-size:10pt; }}
+      .day-name strong::after {{ content:none; }}
       .day-name span {{ color:#222; font-size:8.5pt; }}
       .day-summary {{ font-size:9.5pt; line-height:1.28; }}
       details.day[open] summary {{ display:block; padding-bottom:.04in; }}
