@@ -193,9 +193,10 @@ def render_menu_page(
         if standalone_school:
             header_actions = school_actions
         else:
+            school_page_url = f"{PUBLIC_BASE_URL}/{name.lower()}/"
             school_heading = f"""
         <div class="school-heading">
-          <h2>{html.escape(name)}</h2>
+          <h2><a class="school-page-link" href="{html.escape(school_page_url)}">{html.escape(name)}</a></h2>
           {school_actions}
         </div>"""
         school_sections.append(
@@ -280,6 +281,8 @@ def render_menu_page(
     .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:.65rem; padding:.72rem .15rem .72rem .85rem; border-top:3px solid var(--school-accent); border-bottom:1px solid var(--line); background:var(--school-tint); }}
     .eyebrow {{ margin:0 0 .08rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }}
     h2 {{ margin:0; font-size:1.28rem; line-height:1.05; }}
+    .school-page-link {{ color:inherit; text-decoration:none; text-underline-offset:.16em; }}
+    .school-page-link:hover, .school-page-link:focus-visible {{ text-decoration:underline; }}
     .school-actions {{ display:grid; grid-auto-flow:column; grid-auto-columns:2.35rem; flex:0 0 auto; width:auto; gap:.3rem; }}
     .button {{ appearance:none; border:1px solid var(--blue); border-radius:9px; background:var(--blue); color:#fff; padding:.58rem .72rem; font:inherit; font-size:.82rem; font-weight:750; line-height:1.15; text-decoration:none; cursor:pointer; text-align:center; }}
     .button.secondary {{ background:#fff; color:var(--blue); }}
@@ -293,7 +296,7 @@ def render_menu_page(
     .top .school-actions .button {{ border-color:#ffffff55; background:#ffffff12; color:#fff; }}
     .top .school-actions .button:hover {{ border-color:#ffffff88; background:#ffffff20; color:#fff; }}
     .top .school-actions .expand-toggle {{ border-color:transparent; background:transparent; }}
-    .button:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
+    .button:focus-visible, .school-page-link:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
     .days {{ padding:0 .55rem .65rem; }}
     .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
     .day {{ border-bottom:1px solid var(--line); }}
