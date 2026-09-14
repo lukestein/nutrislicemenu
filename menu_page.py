@@ -299,11 +299,18 @@ def render_menu_page(
     .dialog-actions {{ display:flex; flex-wrap:wrap; gap:.55rem; margin:1rem 0; }}
     dialog code {{ display:block; overflow-wrap:anywhere; padding:.65rem; border-radius:8px; background:var(--wash); color:#40516a; font-size:.75rem; }}
     @media (max-width:760px) {{
+      html {{ font-size:18px; }}
       main {{ grid-template-columns:1fr; padding:.6rem; gap:.6rem; }}
       .school-nav {{ display:flex; }}
+      details.day summary {{ grid-template-columns:4rem 1fr .9rem; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
+      .day-name strong {{ font-size:0; }}
+      .day-name strong::after {{ content:attr(data-short); font-size:1rem; }}
+      .day-name span {{ font-size:.82rem; }}
+      .day-summary {{ font-size:1rem; line-height:1.42; }}
+      .empty-label {{ font-size:.94rem; }}
+      footer {{ font-size:.84rem; }}
     }}
     @media (max-width:420px) {{
-      html {{ font-size:18px; }}
       .top {{ padding:.72rem .75rem; }}
       .top-row {{ gap:.5rem; }}
       .school-nav {{ gap:.3rem; }}
@@ -311,14 +318,7 @@ def render_menu_page(
       .school-heading {{ padding:.65rem .7rem; }}
       .subscribe-actions {{ gap:.25rem; }}
       .subscribe-actions .button {{ padding:.4rem; font-size:.82rem; }}
-      details.day summary {{ grid-template-columns:4rem 1fr .9rem; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
-      .day-name strong {{ font-size:0; }}
-      .day-name strong::after {{ content:attr(data-short); font-size:1rem; }}
-      .day-name span {{ font-size:.82rem; }}
-      .day-summary {{ font-size:1rem; line-height:1.42; }}
-      .empty-label {{ font-size:.94rem; }}
       .day-details {{ margin:0 .25rem .75rem; }}
-      footer {{ font-size:.84rem; }}
     }}
     @media (prefers-reduced-motion:reduce) {{ html {{ scroll-behavior:auto; }} .chevron {{ transition:none; }} }}
   </style>

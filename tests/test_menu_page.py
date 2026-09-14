@@ -82,6 +82,9 @@ class MenuPageTests(unittest.TestCase):
         self.assertNotIn("Next 7 days", page)
         self.assertIn(".school-nav { display:none;", page)
         self.assertIn(".school-nav { display:flex; }", page)
+        self.assertIn(
+            "@media (max-width:760px) {\n      html { font-size:18px; }", page
+        )
         self.assertIn("Cheese pizza, chicken caesar salad", page)
         self.assertNotIn("cheese 🍕, chicken caesar 🥗", page)
         self.assertNotIn('<details class="day" open>', page)
