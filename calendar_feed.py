@@ -95,7 +95,7 @@ def event_summary(
         for food_name in section_foods:
             if not is_summary_item(school["slug"], food_name):
                 continue
-            compact = compact_food_name(food_name)
+            compact = _capitalize_first_letter(compact_food_name(food_name))
             key = compact.casefold()
             if key not in seen:
                 foods.append(compact)
@@ -104,8 +104,6 @@ def event_summary(
     prefix = school["name"]
     if not foods:
         return prefix
-
-    foods[0] = _capitalize_first_letter(foods[0])
 
     included = []
     for food in foods:

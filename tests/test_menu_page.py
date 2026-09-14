@@ -85,7 +85,7 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn(
             "@media (max-width:760px) {\n      html { font-size:18px; }", page
         )
-        self.assertIn("Cheese pizza, chicken caesar salad", page)
+        self.assertIn("Cheese pizza, Chicken caesar salad", page)
         self.assertNotIn("cheese 🍕, chicken caesar 🥗", page)
         self.assertNotIn('<details class="day" open>', page)
         self.assertIn('<strong data-short="Mon">Monday</strong>', page)
