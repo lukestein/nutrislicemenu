@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 import os
+import re
 from zoneinfo import ZoneInfo
 
 import requests
@@ -11,6 +12,11 @@ import requests
 
 EASTERN_TIME = ZoneInfo("America/New_York")
 HTTP_TIMEOUT_SECONDS = 15
+
+
+def typographic_text(value: str) -> str:
+    """Use a curly apostrophe for contractions and possessives in display text."""
+    return re.sub(r"(?<=[A-Za-z])'(?=[A-Za-z])", "’", value)
 
 
 def next_weekday(today: dt.date | None = None) -> dt.date:

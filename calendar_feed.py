@@ -15,7 +15,7 @@ from calendar_config import (
     SUMMARY_EMOJI_REPLACEMENTS,
     SUMMARY_RULES,
 )
-from menu_common import EASTERN_TIME
+from menu_common import EASTERN_TIME, typographic_text
 from menu_page import render_menu_page
 from nutrislicemenu import (
     HIDE_SECTION_HEADERS,
@@ -73,7 +73,7 @@ def compact_food_name(food_name: str) -> str:
         )
     for pattern, replacement in SUMMARY_EMOJI_REPLACEMENTS:
         compact = re.sub(pattern, replacement, compact, flags=re.IGNORECASE)
-    return compact
+    return typographic_text(compact)
 
 
 def _capitalize_first_letter(value: str) -> str:
@@ -128,8 +128,8 @@ def event_description(
             continue
         lines = []
         if section not in HIDE_SECTION_HEADERS:
-            lines.append(section)
-        lines.extend(f"• {food}" for food in foods)
+            lines.append(typographic_text(section))
+        lines.extend(f"• {typographic_text(food)}" for food in foods)
         blocks.append("\n".join(lines))
     blocks.append(f"Nutrislice menu: {source_url}")
     return "\n\n".join(blocks)

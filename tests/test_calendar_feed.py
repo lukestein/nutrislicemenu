@@ -80,6 +80,10 @@ class SummaryTests(unittest.TestCase):
             "chicken 🍕 🥗",
         )
         self.assertEqual(
+            calendar_feed.compact_food_name("Meat Lover's Pizza"),
+            "meat lover’s 🍕",
+        )
+        self.assertEqual(
             calendar_feed.compact_food_name(
                 "Muffin, Goldfish & Yogurt Fun Lunch"
             ),
@@ -110,14 +114,14 @@ class DescriptionTests(unittest.TestCase):
             {
                 "Lunch": ["Cheese Pizza"],
                 "Extra Extra": ["Fresh Whole Fruit"],
-                "Chef's Table": ["Chicken Caesar Salad"],
+                "Chef's Table": ["Farmer's Chicken Salad"],
             },
             "https://example.com/menu",
         )
 
         self.assertEqual(
             description,
-            "• Cheese Pizza\n\nChef's Table\n• Chicken Caesar Salad\n\n"
+            "• Cheese Pizza\n\nChef’s Table\n• Farmer’s Chicken Salad\n\n"
             "Nutrislice menu: https://example.com/menu",
         )
 
