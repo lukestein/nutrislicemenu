@@ -147,6 +147,7 @@ class MenuPageTests(unittest.TestCase):
             page,
         )
         self.assertNotIn("Angier: cheese", page)
+        self.assertNotIn('<footer class="standalone-footer">', page)
 
     def test_page_has_clear_empty_state_when_no_menus_are_posted(self):
         page = render_menu_page(
@@ -202,6 +203,11 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("<h1>Angier</h1>", page)
         self.assertIn('<header class="top standalone-top">', page)
         self.assertIn('<div class="top-row standalone-top-row">', page)
+        self.assertIn('<footer class="standalone-footer">', page)
+        self.assertIn(
+            ".standalone-footer { width:min(38rem,calc(100% - 1.2rem)); }",
+            page,
+        )
         self.assertIn(
             ".standalone-top-row { width:min(38rem,100%); margin:0 auto; "
             "padding-right:.15rem; }",
