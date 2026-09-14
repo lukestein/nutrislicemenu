@@ -74,6 +74,7 @@ SUMMARY_ALIASES = {
 SUMMARY_CAPITALIZATIONS = {
     "bbq": "BBQ",
     "blt": "BLT",
+    "goldfish": "Goldfish",
     "pb&j": "PB&J",
 }
 

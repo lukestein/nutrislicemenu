@@ -79,6 +79,19 @@ class SummaryTests(unittest.TestCase):
             calendar_feed.compact_food_name("Chicken Pizza Salad"),
             "chicken 🍕 🥗",
         )
+        self.assertEqual(
+            calendar_feed.compact_food_name(
+                "Muffin, Goldfish & Yogurt Fun Lunch"
+            ),
+            "muffin, Goldfish & yogurt fun lunch",
+        )
+        self.assertEqual(
+            calendar_feed.event_summary(
+                ANGIER,
+                {"Lunch": ["Muffin, Goldfish & Yogurt Fun Lunch"]},
+            ),
+            "Angier: Muffin, Goldfish & yogurt fun lunch",
+        )
 
     def test_summary_does_not_truncate_at_four_short_items(self):
         sections = {
