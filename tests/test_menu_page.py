@@ -122,6 +122,21 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("#angier { --school-accent:#2f68a0;", page)
         self.assertIn("#brown { --school-accent:#8a623f;", page)
         self.assertIn("background:var(--school-tint);", page)
+        self.assertIn(
+            '<h2><a class="school-page-link" '
+            'href="https://lukestein.com/nutrislicemenu/angier/">Angier</a></h2>',
+            page,
+        )
+        self.assertIn(
+            '<h2><a class="school-page-link" '
+            'href="https://lukestein.com/nutrislicemenu/brown/">Brown</a></h2>',
+            page,
+        )
+        self.assertIn(
+            ".school-page-link:hover, .school-page-link:focus-visible "
+            "{ text-decoration:underline; }",
+            page,
+        )
         self.assertIn("content:attr(data-short);", page)
         self.assertIn("content:attr(data-short); font-size:1.1rem;", page)
         self.assertIn(
@@ -196,6 +211,7 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn('data-school-target="angier"', page)
         self.assertNotIn('<nav class="school-nav"', page)
         self.assertNotIn("<h2>Angier</h2>", page)
+        self.assertNotIn('class="school-page-link"', page)
         self.assertNotIn("Brown", page)
 
     def test_web_summary_uses_words_and_sentence_capitalization(self):
