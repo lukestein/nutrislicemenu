@@ -13,7 +13,7 @@ from nutrislicemenu import HIDE_SECTION_HEADERS, IGNORED_SECTIONS
 PUBLIC_BASE_URL = "https://lukestein.com/nutrislicemenu"
 GOOGLE_ADD_URL = "https://calendar.google.com/calendar/u/0/r/settings/addbyurl"
 WEB_SUMMARY_REPLACEMENTS = {
-    "🌭": "hot dog",
+    "🌭": "Hot dog",
     "🍕": "pizza",
     "🥗": "salad",
 }

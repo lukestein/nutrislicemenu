@@ -176,6 +176,13 @@ class MenuPageTests(unittest.TestCase):
             ),
             "Hot dog, cheese pizza, chicken caesar salad",
         )
+        self.assertEqual(
+            format_web_summary(
+                "Brown: Tempura style chicken nuggets, Jalapeno carnita 🍕, 🌭",
+                "Brown",
+            ),
+            "Tempura style chicken nuggets, Jalapeno carnita pizza, Hot dog",
+        )
 
     def test_page_escapes_menu_content(self):
         menus = {
