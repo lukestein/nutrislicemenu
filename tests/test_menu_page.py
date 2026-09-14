@@ -185,6 +185,13 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("<title>Angier lunch menu</title>", page)
         self.assertIn('<main class="single-school">', page)
         self.assertIn("<h1>Angier</h1>", page)
+        self.assertIn('<header class="top standalone-top">', page)
+        self.assertIn('<div class="top-row standalone-top-row">', page)
+        self.assertIn(
+            ".standalone-top-row { width:min(38rem,100%); margin:0 auto; "
+            "padding-right:.15rem; }",
+            page,
+        )
         self.assertEqual(page.count('class="button secondary expand-toggle"'), 1)
         self.assertIn('data-school-target="angier"', page)
         self.assertNotIn('<nav class="school-nav"', page)
