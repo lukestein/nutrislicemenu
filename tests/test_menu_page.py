@@ -85,7 +85,7 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn(
             "@media (max-width:760px) {\n      html { font-size:18px; }", page
         )
-        self.assertIn("Cheese pizza, Chicken caesar salad", page)
+        self.assertIn("Cheese pizza\u00a0· Chicken caesar salad", page)
         self.assertNotIn("cheese 🍕, chicken caesar 🥗", page)
         self.assertNotIn('<details class="day" open>', page)
         self.assertIn('<strong data-short="Mon">Monday</strong>', page)
@@ -172,16 +172,18 @@ class MenuPageTests(unittest.TestCase):
     def test_web_summary_uses_words_and_sentence_capitalization(self):
         self.assertEqual(
             format_web_summary(
-                "Angier: 🌭, cheese 🍕, chicken caesar 🥗", "Angier"
+                "Angier: 🌭\u00a0· cheese 🍕\u00a0· chicken caesar 🥗", "Angier"
             ),
-            "Hot dog, cheese pizza, chicken caesar salad",
+            "Hot dog\u00a0· cheese pizza\u00a0· chicken caesar salad",
         )
         self.assertEqual(
             format_web_summary(
-                "Brown: Tempura style chicken nuggets, Jalapeno carnita 🍕, 🌭",
+                "Brown: Tempura style chicken nuggets\u00a0· "
+                "Jalapeno carnita 🍕\u00a0· 🌭",
                 "Brown",
             ),
-            "Tempura style chicken nuggets, Jalapeno carnita pizza, Hot dog",
+            "Tempura style chicken nuggets\u00a0· Jalapeno carnita pizza\u00a0· "
+            "Hot dog",
         )
 
     def test_page_escapes_menu_content(self):
