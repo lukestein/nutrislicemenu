@@ -183,6 +183,7 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn(
             ".day.week-break { margin-top:.55rem; border-top:3px solid", page
         )
+        self.assertIn(".day:has(+ .day.week-break) { border-bottom:0; }", page)
 
     def test_single_school_page_has_simplified_header(self):
         menus = {

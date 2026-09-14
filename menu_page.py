@@ -302,6 +302,7 @@ def render_menu_page(
     .days {{ padding:0 .55rem .65rem; }}
     .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
     .day {{ border-bottom:1px solid var(--line); }}
+    .day:has(+ .day.week-break) {{ border-bottom:0; }}
     .day.week-break {{ margin-top:.55rem; border-top:3px solid var(--school-accent,var(--blue-2)); }}
     .day:last-child {{ border-bottom:0; }}
     details.day summary {{ display:grid; grid-template-columns:5rem 1fr 1rem; gap:.75rem; align-items:center; min-height:4.35rem; padding:.7rem .5rem; cursor:pointer; list-style:none; }}
