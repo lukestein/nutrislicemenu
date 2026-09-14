@@ -235,6 +235,8 @@ def render_menu_page(
       <div><p class="eyebrow top-eyebrow">Lunch menu</p><h1>{html.escape(school_name)}</h1><p class="week">{html.escape(date_range_label)}</p></div>
       {header_actions}"""
         main_class = ' class="single-school"'
+        top_class = "top standalone-top"
+        top_row_class = "top-row standalone-top-row"
     else:
         document_title = "Newton school lunch menus"
         description = "Upcoming Angier and Brown school lunch menus and calendar subscriptions."
@@ -242,6 +244,8 @@ def render_menu_page(
       <div><h1>School lunch menus</h1><p class="week">{html.escape(date_range_label)}</p></div>
       <nav class="school-nav" aria-label="Schools"><a href="#angier">Angier</a><a href="#brown">Brown</a></nav>"""
         main_class = ""
+        top_class = "top"
+        top_row_class = "top-row"
 
     return f"""<!doctype html>
 <html lang="en">
@@ -262,6 +266,7 @@ def render_menu_page(
     a {{ color:inherit; }}
     .top {{ background:linear-gradient(135deg,var(--blue),var(--blue-2)); color:#fff; padding:.85rem max(1rem,calc((100vw - 70rem)/2)); }}
     .top-row {{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; }}
+    .standalone-top-row {{ width:min(38rem,100%); margin:0 auto; padding-right:.15rem; }}
     h1 {{ margin:0; font-size:clamp(1.35rem,4.5vw,2rem); line-height:1.08; letter-spacing:-.025em; }}
     .week {{ margin:.2rem 0 0; color:#d9e6f7; font-size:.88rem; }}
     .top-eyebrow {{ color:#bcd0e9; }}
@@ -322,6 +327,7 @@ def render_menu_page(
     dialog code {{ display:block; overflow-wrap:anywhere; padding:.65rem; border-radius:8px; background:var(--wash); color:#40516a; font-size:.75rem; }}
     @media (max-width:760px) {{
       html {{ font-size:18px; }}
+      .top.standalone-top {{ padding-left:.6rem; padding-right:.6rem; }}
       main {{ grid-template-columns:1fr; padding:.6rem; gap:.6rem; }}
       .school-nav {{ display:flex; }}
       details.day summary {{ grid-template-columns:4rem 1fr .9rem; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
@@ -386,8 +392,8 @@ def render_menu_page(
   </style>
 </head>
 <body>
-  <header class="top">
-    <div class="top-row">
+  <header class="{top_class}">
+    <div class="{top_row_class}">
       {header_content}
     </div>
   </header>
