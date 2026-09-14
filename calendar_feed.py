@@ -76,6 +76,15 @@ def compact_food_name(food_name: str) -> str:
     return compact
 
 
+def _capitalize_first_letter(value: str) -> str:
+    """Capitalize the first alphabetic character without changing later words."""
+    match = re.search(r"[A-Za-z]", value)
+    if not match:
+        return value
+    index = match.start()
+    return value[:index] + value[index].upper() + value[index + 1 :]
+
+
 def event_summary(
     school: dict[str, str], menu_sections: dict[str, list[str]]
 ) -> str:
@@ -95,6 +104,8 @@ def event_summary(
     prefix = school["name"]
     if not foods:
         return prefix
+
+    foods[0] = _capitalize_first_letter(foods[0])
 
     included = []
     for food in foods:
