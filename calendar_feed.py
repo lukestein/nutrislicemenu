@@ -24,6 +24,8 @@ from nutrislicemenu import (
     get_menu_week,
 )
 
+SUMMARY_SEPARATOR = "\u00a0· "
+
 
 CALENDAR_DOMAIN = "nutrislicemenu.lukestein"
 DEFAULT_WEEKS = 4
@@ -88,7 +90,7 @@ def _capitalize_first_letter(value: str) -> str:
 def event_summary(
     school: dict[str, str], menu_sections: dict[str, list[str]]
 ) -> str:
-    """Build a compact, comma-separated calendar event title."""
+    """Build a compact calendar event title with distinct item separators."""
     foods = []
     seen = set()
     for section_foods in menu_sections.values():
@@ -107,14 +109,14 @@ def event_summary(
 
     included = []
     for food in foods:
-        candidate = f"{prefix}: {', '.join(included + [food])}"
+        candidate = f"{prefix}: {SUMMARY_SEPARATOR.join(included + [food])}"
         if included and len(candidate) > MAX_SUMMARY_LENGTH:
             break
         included.append(food)
 
-    summary = f"{prefix}: {', '.join(included)}"
+    summary = f"{prefix}: {SUMMARY_SEPARATOR.join(included)}"
     if len(included) < len(foods):
-        summary += ", …"
+        summary += f"{SUMMARY_SEPARATOR}…"
     return summary
 
 

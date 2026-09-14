@@ -35,7 +35,8 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(ANGIER, sections),
-            "Angier: Cheese 🍕, Cheese stuffed breadsticks, Chicken caesar 🥗",
+            "Angier: Cheese 🍕\u00a0· Cheese stuffed breadsticks\u00a0· "
+            "Chicken caesar 🥗",
         )
 
     def test_brown_removes_staples_but_keeps_rotating_station_items(self):
@@ -53,8 +54,8 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(BROWN, sections),
-            "Brown: Baked falafel flatbread, Margherita 🍕, "
-            "🌭, BBQ cheddar chicken sandwich",
+            "Brown: Baked falafel flatbread\u00a0· Margherita 🍕\u00a0· "
+            "🌭\u00a0· BBQ cheddar chicken sandwich",
         )
 
     def test_summary_capitalizes_each_menu_item_for_each_school(self):
@@ -64,11 +65,11 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(BROWN, sections),
-            "Brown: Tempura style chicken nuggets, Jalapeno carnita 🍕",
+            "Brown: Tempura style chicken nuggets\u00a0· Jalapeno carnita 🍕",
         )
         self.assertEqual(
             calendar_feed.event_summary(ANGIER, sections),
-            "Angier: Tempura style chicken nuggets, Jalapeno carnita 🍕",
+            "Angier: Tempura style chicken nuggets\u00a0· Jalapeno carnita 🍕",
         )
 
     def test_compact_names_use_food_emoji(self):
@@ -104,7 +105,8 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(ANGIER, sections),
-            "Angier: Tacos, 🍕, Pasta, Panini, Black bean burger",
+            "Angier: Tacos\u00a0· 🍕\u00a0· Pasta\u00a0· Panini\u00a0· "
+            "Black bean burger",
         )
 
 
