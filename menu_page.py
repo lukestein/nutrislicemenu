@@ -6,7 +6,7 @@ import datetime as dt
 import html
 from collections.abc import Callable
 
-from menu_common import EASTERN_TIME
+from menu_common import EASTERN_TIME, typographic_text
 from nutrislicemenu import HIDE_SECTION_HEADERS, IGNORED_SECTIONS
 
 
@@ -73,8 +73,10 @@ def _menu_sections(menu_sections: dict[str, list[str]]) -> str:
             continue
         heading = ""
         if section not in HIDE_SECTION_HEADERS:
-            heading = f'<h4>{html.escape(section)}</h4>'
-        items = "".join(f"<li>{html.escape(food)}</li>" for food in foods)
+            heading = f'<h4>{html.escape(typographic_text(section))}</h4>'
+        items = "".join(
+            f"<li>{html.escape(typographic_text(food))}</li>" for food in foods
+        )
         blocks.append(f'<div class="menu-section">{heading}<ul>{items}</ul></div>')
     return "".join(blocks)
 

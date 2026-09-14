@@ -51,6 +51,14 @@ class NotificationTests(unittest.TestCase):
 
 
 class NutrisliceTests(unittest.TestCase):
+    def test_notification_uses_typographic_apostrophes(self):
+        self.assertEqual(
+            nutrislicemenu.format_menu_markdown(
+                {"Chef's Table": ["Meat Lover's Pizza"]}
+            ),
+            "**Chef’s Table**\n- Meat Lover’s Pizza",
+        )
+
     @patch("nutrislicemenu.requests.get")
     def test_menu_parsing_filters_ignored_sections(self, get):
         response = Mock()

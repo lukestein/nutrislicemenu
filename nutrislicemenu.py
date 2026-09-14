@@ -8,6 +8,7 @@ from menu_common import (
     next_weekday,
     required_environment_variable,
     send_notification,
+    typographic_text,
 )
 
 load_dotenv()
@@ -109,9 +110,9 @@ def format_menu_markdown(menu_sections: dict[str, list[str]]) -> str:
     for section in sorted_sections:
         section_md_output = []
         if section not in HIDE_SECTION_HEADERS:
-            section_md_output.append(f"**{section}**")
+            section_md_output.append(f"**{typographic_text(section)}**")
         for food in menu_sections[section]:
-            section_md_output.append(f"- {food}")
+            section_md_output.append(f"- {typographic_text(food)}")
             
         md_output.append("\n".join(section_md_output))
     

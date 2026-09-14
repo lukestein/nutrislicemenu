@@ -187,7 +187,9 @@ class MenuPageTests(unittest.TestCase):
     def test_page_escapes_menu_content(self):
         menus = {
             "angier-elementary": {
-                dt.date(2026, 9, 14): {"Lunch": ["<script>alert(1)</script>"]}
+                dt.date(2026, 9, 14): {
+                    "Chef's Table": ["Meat Lover's <script>alert(1)</script>"]
+                }
             }
         }
         page = render_menu_page(
@@ -198,7 +200,8 @@ class MenuPageTests(unittest.TestCase):
             event_summary,
         )
 
-        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", page)
+        self.assertIn("Chef’s Table", page)
+        self.assertIn("Meat Lover’s &lt;script&gt;alert(1)&lt;/script&gt;", page)
         self.assertNotIn("<script>alert(1)</script>", page)
 
 
