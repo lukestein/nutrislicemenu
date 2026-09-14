@@ -170,8 +170,15 @@ def render_menu_page(
         )
         if not school_dates:
             days = '<p class="school-empty">No upcoming menus are posted.</p>'
-        subscribe_actions = f"""
-          <div class="subscribe-actions">
+        expand_action = ""
+        if school_dates:
+            expand_action = f"""
+            <button class="button secondary expand-toggle" type="button" data-school-target="{html.escape(name.lower())}" aria-expanded="false" aria-label="Expand all menus" title="Expand all menus">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m7 5 5 5 5-5M7 12l5 5 5-5"/></svg>
+              <span class="visually-hidden">Expand all menus</span>
+            </button>"""
+        school_actions = f"""
+          <div class="school-actions">
             <a class="button apple" href="{html.escape(webcal_url)}" title="Add to Apple Calendar">
               <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
               <span class="visually-hidden">Apple Calendar</span>
@@ -180,15 +187,16 @@ def render_menu_page(
               <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24h12.632v-5.684H5.684V24zM18.316 5.684V0H1.895A1.894 1.894 0 0 0 0 1.895v16.421h5.684V5.684h12.632zm-7.207 6.25v-.065c.272-.144.5-.349.687-.617s.279-.595.279-.982c0-.379-.099-.72-.3-1.025a2.05 2.05 0 0 0-.832-.714 2.703 2.703 0 0 0-1.197-.257c-.6 0-1.094.156-1.481.467-.386.311-.65.671-.793 1.078l1.085.452c.086-.249.224-.461.413-.633.189-.172.445-.257.767-.257.33 0 .602.088.816.264a.86.86 0 0 1 .322.703c0 .33-.12.589-.36.778-.24.19-.535.284-.886.284h-.567v1.085h.633c.407 0 .748.109 1.02.327.272.218.407.499.407.843 0 .336-.129.614-.387.832s-.565.327-.924.327c-.351 0-.651-.103-.897-.311-.248-.208-.422-.502-.521-.881l-1.096.452c.178.616.505 1.082.977 1.401.472.319.984.478 1.538.477a2.84 2.84 0 0 0 1.293-.291c.382-.193.684-.458.902-.794.218-.336.327-.72.327-1.149 0-.429-.115-.797-.344-1.105a2.067 2.067 0 0 0-.881-.689zm2.093-1.931l.602.913L15 10.045v5.744h1.187V8.446h-.827l-2.158 1.557zM22.105 0h-3.289v5.184H24V1.895A1.894 1.894 0 0 0 22.105 0zm-3.289 23.5l4.684-4.684h-4.684V23.5zM0 22.105C0 23.152.848 24 1.895 24h3.289v-5.184H0v3.289z"/></svg>
               <span class="visually-hidden">Google/Android</span>
             </button>
+            {expand_action}
           </div>"""
         school_heading = ""
         if standalone_school:
-            header_actions = subscribe_actions
+            header_actions = school_actions
         else:
             school_heading = f"""
         <div class="school-heading">
           <h2>{html.escape(name)}</h2>
-          {subscribe_actions}
+          {school_actions}
         </div>"""
         school_sections.append(
             f"""
@@ -264,18 +272,21 @@ def render_menu_page(
     .school {{ background:var(--paper); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 10px 28px #243a5a0d; }}
     #angier {{ --school-accent:#2f68a0; --school-tint:#eef5fc; }}
     #brown {{ --school-accent:#8a623f; --school-tint:#f7f0e8; }}
-    .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:.65rem; padding:.72rem .85rem; border-top:3px solid var(--school-accent); border-bottom:1px solid var(--line); background:var(--school-tint); }}
+    .school-heading {{ display:flex; align-items:center; justify-content:space-between; gap:.65rem; padding:.72rem .15rem .72rem .85rem; border-top:3px solid var(--school-accent); border-bottom:1px solid var(--line); background:var(--school-tint); }}
     .eyebrow {{ margin:0 0 .08rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }}
     h2 {{ margin:0; font-size:1.28rem; line-height:1.05; }}
-    .subscribe-actions {{ display:grid; grid-template-columns:repeat(2,2.35rem); flex:0 0 auto; width:auto; gap:.3rem; }}
+    .school-actions {{ display:grid; grid-auto-flow:column; grid-auto-columns:2.35rem; flex:0 0 auto; width:auto; gap:.3rem; }}
     .button {{ appearance:none; border:1px solid var(--blue); border-radius:9px; background:var(--blue); color:#fff; padding:.58rem .72rem; font:inherit; font-size:.82rem; font-weight:750; line-height:1.15; text-decoration:none; cursor:pointer; text-align:center; }}
     .button.secondary {{ background:#fff; color:var(--blue); }}
-    .subscribe-actions .button {{ display:flex; align-items:center; justify-content:center; width:2.35rem; min-width:2.35rem; height:2.35rem; min-height:2.35rem; padding:.55rem; border-color:#cad5e4; background:#ffffff99; color:#36577f; }}
-    .subscribe-actions .button svg {{ display:block; width:100%; height:100%; fill:currentColor; }}
-    .subscribe-actions .google-calendar {{ color:#4285f4; }}
-    .subscribe-actions .button:hover {{ border-color:#9cafc7; background:#eef3f8; color:var(--blue); }}
-    .top .subscribe-actions .button {{ border-color:#ffffff55; background:#ffffff12; color:#fff; }}
-    .top .subscribe-actions .button:hover {{ border-color:#ffffff88; background:#ffffff20; color:#fff; }}
+    .school-actions .button {{ display:flex; align-items:center; justify-content:center; width:2.35rem; min-width:2.35rem; height:2.35rem; min-height:2.35rem; padding:.55rem; border-color:#cad5e4; background:#ffffff99; color:#36577f; }}
+    .school-actions .button svg {{ display:block; width:100%; height:100%; fill:currentColor; }}
+    .school-actions .google-calendar {{ color:#4285f4; }}
+    .school-actions .expand-toggle {{ color:#60708a; }}
+    .school-actions .expand-toggle svg {{ fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:transform .16s ease; }}
+    .school-actions .expand-toggle[aria-expanded="true"] svg {{ transform:rotate(180deg); }}
+    .school-actions .button:hover {{ border-color:#9cafc7; background:#eef3f8; color:var(--blue); }}
+    .top .school-actions .button {{ border-color:#ffffff55; background:#ffffff12; color:#fff; }}
+    .top .school-actions .button:hover {{ border-color:#ffffff88; background:#ffffff20; color:#fff; }}
     .button:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
     .days {{ padding:0 .55rem .65rem; }}
     .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
@@ -325,12 +336,12 @@ def render_menu_page(
       .top-row {{ gap:.5rem; }}
       .school-nav {{ gap:.3rem; }}
       .school-nav a {{ padding:.34rem .5rem; font-size:.84rem; }}
-      .school-heading {{ padding:.65rem .7rem; }}
-      .subscribe-actions {{ gap:.25rem; }}
-      .subscribe-actions .button {{ padding:.4rem; font-size:.82rem; }}
+      .school-heading {{ padding:.65rem .15rem .65rem .7rem; }}
+      .school-actions {{ gap:.25rem; }}
+      .school-actions .button {{ padding:.4rem; font-size:.82rem; }}
       .day-details {{ margin:0 .25rem .75rem; }}
     }}
-    @media (prefers-reduced-motion:reduce) {{ html {{ scroll-behavior:auto; }} .chevron {{ transition:none; }} }}
+    @media (prefers-reduced-motion:reduce) {{ html {{ scroll-behavior:auto; }} .chevron, .expand-toggle svg {{ transition:none; }} }}
   </style>
 </head>
 <body>
@@ -355,6 +366,26 @@ def render_menu_page(
         button.textContent = 'Copied';
         setTimeout(function() {{ button.textContent = original; }}, 1800);
       }});
+    }});
+    document.querySelectorAll('[data-school-target]').forEach(function(button) {{
+      const school = document.getElementById(button.dataset.schoolTarget);
+      const menus = Array.from(school.querySelectorAll('details.day'));
+      const label = button.querySelector('.visually-hidden');
+      function updateToggle() {{
+        const allExpanded = menus.length > 0 && menus.every(function(menu) {{ return menu.open; }});
+        const action = allExpanded ? 'Collapse all menus' : 'Expand all menus';
+        button.setAttribute('aria-expanded', String(allExpanded));
+        button.setAttribute('aria-label', action);
+        button.title = action;
+        label.textContent = action;
+      }}
+      button.addEventListener('click', function() {{
+        const shouldExpand = menus.some(function(menu) {{ return !menu.open; }});
+        menus.forEach(function(menu) {{ menu.open = shouldExpand; }});
+        updateToggle();
+      }});
+      menus.forEach(function(menu) {{ menu.addEventListener('toggle', updateToggle); }});
+      updateToggle();
     }});
     document.querySelectorAll('dialog').forEach(function(dialog) {{
       dialog.addEventListener('click', function(event) {{

@@ -98,7 +98,12 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn('title="Add to Apple Calendar"', page)
         self.assertIn('title="Add to Google or Android Calendar"', page)
         self.assertIn('class="visually-hidden">Apple Calendar</span>', page)
-        self.assertIn("grid-template-columns:repeat(2,2.35rem)", page)
+        self.assertEqual(page.count('class="button secondary expand-toggle"'), 2)
+        self.assertIn('data-school-target="angier"', page)
+        self.assertIn('data-school-target="brown"', page)
+        self.assertIn('aria-label="Expand all menus"', page)
+        self.assertIn("const shouldExpand = menus.some", page)
+        self.assertIn("grid-auto-columns:2.35rem", page)
         self.assertNotIn('<p class="eyebrow">Lunch menu</p>', page)
         self.assertIn("#angier { --school-accent:#2f68a0;", page)
         self.assertIn("#brown { --school-accent:#8a623f;", page)
@@ -125,6 +130,7 @@ class MenuPageTests(unittest.TestCase):
 
         self.assertIn("No upcoming menus posted", page)
         self.assertEqual(page.count("No upcoming menus are posted."), 2)
+        self.assertNotIn('class="button secondary expand-toggle"', page)
         self.assertNotIn("December 24–31, 2026", page)
 
     def test_page_marks_new_week_after_holiday_gap(self):
@@ -165,6 +171,8 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("<title>Angier lunch menu</title>", page)
         self.assertIn('<main class="single-school">', page)
         self.assertIn("<h1>Angier</h1>", page)
+        self.assertEqual(page.count('class="button secondary expand-toggle"'), 1)
+        self.assertIn('data-school-target="angier"', page)
         self.assertNotIn('<nav class="school-nav"', page)
         self.assertNotIn("<h2>Angier</h2>", page)
         self.assertNotIn("Brown", page)
