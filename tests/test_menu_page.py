@@ -83,6 +83,7 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("Cheese pizza, chicken caesar salad", page)
         self.assertNotIn("cheese 🍕, chicken caesar 🥗", page)
         self.assertNotIn('<details class="day" open>', page)
+        self.assertIn('<strong data-short="Mon">Monday</strong>', page)
         self.assertIn("Cheese Pizza", page)
         self.assertIn(
             "webcal://lukestein.com/nutrislicemenu/angier.ics", page
@@ -93,6 +94,7 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("#angier { --school-accent:#2f68a0;", page)
         self.assertIn("#brown { --school-accent:#8a623f;", page)
         self.assertIn("background:var(--school-tint);", page)
+        self.assertIn("content:attr(data-short);", page)
         self.assertIn(
             'href="https://lukestein.com/nutrislicemenu/favicon.svg"', page
         )

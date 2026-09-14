@@ -94,7 +94,7 @@ def _day_card(
     if not has_menu(menu_sections):
         return f"""
         <div class="day empty">
-          <div class="day-name"><strong>{day_label}</strong><span>{date_label}</span></div>
+          <div class="day-name"><strong data-short="{menu_date:%a}">{day_label}</strong><span>{date_label}</span></div>
           <span class="empty-label">No menu posted</span>
         </div>"""
 
@@ -102,7 +102,7 @@ def _day_card(
     return f"""
         <details class="day">
           <summary>
-            <span class="day-name"><strong>{day_label}</strong><span>{date_label}</span></span>
+            <span class="day-name"><strong data-short="{menu_date:%a}">{day_label}</strong><span>{date_label}</span></span>
             <span class="day-summary">{html.escape(compact_summary)}</span>
             <span class="chevron" aria-hidden="true"></span>
           </summary>
@@ -293,15 +293,22 @@ def render_menu_page(
       main {{ grid-template-columns:1fr; padding:.6rem; gap:.6rem; }}
     }}
     @media (max-width:420px) {{
+      html {{ font-size:18px; }}
       .top {{ padding:.72rem .75rem; }}
       .top-row {{ gap:.5rem; }}
       .school-nav {{ gap:.3rem; }}
-      .school-nav a {{ padding:.32rem .48rem; }}
+      .school-nav a {{ padding:.34rem .5rem; font-size:.84rem; }}
       .school-heading {{ padding:.65rem .7rem; }}
       .subscribe-actions {{ gap:.25rem; }}
-      .subscribe-actions .button {{ padding:.36rem .4rem; font-size:.7rem; }}
-      details.day summary {{ grid-template-columns:5.25rem 1fr .8rem; gap:.5rem; }}
+      .subscribe-actions .button {{ padding:.4rem; font-size:.82rem; }}
+      details.day summary {{ grid-template-columns:4rem 1fr .9rem; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
+      .day-name strong {{ font-size:0; }}
+      .day-name strong::after {{ content:attr(data-short); font-size:1rem; }}
+      .day-name span {{ font-size:.82rem; }}
+      .day-summary {{ font-size:1rem; line-height:1.42; }}
+      .empty-label {{ font-size:.94rem; }}
       .day-details {{ margin:0 .25rem .75rem; }}
+      footer {{ font-size:.84rem; }}
     }}
     @media (prefers-reduced-motion:reduce) {{ html {{ scroll-behavior:auto; }} .chevron {{ transition:none; }} }}
   </style>
