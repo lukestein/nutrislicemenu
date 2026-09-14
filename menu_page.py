@@ -241,7 +241,7 @@ def render_menu_page(
     h1 {{ margin:0; font-size:clamp(1.35rem,4.5vw,2rem); line-height:1.08; letter-spacing:-.025em; }}
     .week {{ margin:.2rem 0 0; color:#d9e6f7; font-size:.88rem; }}
     .top-eyebrow {{ color:#bcd0e9; }}
-    .school-nav {{ display:flex; gap:.45rem; }}
+    .school-nav {{ display:none; gap:.45rem; }}
     .school-nav a {{ padding:.38rem .62rem; border:1px solid #ffffff55; border-radius:999px; text-decoration:none; font-size:.82rem; font-weight:650; }}
     main {{ width:min(70rem,100%); margin:0 auto; padding:1rem; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; align-items:start; }}
     main.single-school {{ grid-template-columns:minmax(0,38rem); justify-content:center; }}
@@ -291,6 +291,7 @@ def render_menu_page(
     dialog code {{ display:block; overflow-wrap:anywhere; padding:.65rem; border-radius:8px; background:var(--wash); color:#40516a; font-size:.75rem; }}
     @media (max-width:760px) {{
       main {{ grid-template-columns:1fr; padding:.6rem; gap:.6rem; }}
+      .school-nav {{ display:flex; }}
     }}
     @media (max-width:420px) {{
       html {{ font-size:18px; }}

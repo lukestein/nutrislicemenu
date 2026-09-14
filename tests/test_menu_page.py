@@ -80,6 +80,8 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("September 14–18, 2026", page)
         self.assertNotIn("September 13–20, 2026", page)
         self.assertNotIn("Next 7 days", page)
+        self.assertIn(".school-nav { display:none;", page)
+        self.assertIn(".school-nav { display:flex; }", page)
         self.assertIn("Cheese pizza, chicken caesar salad", page)
         self.assertNotIn("cheese 🍕, chicken caesar 🥗", page)
         self.assertNotIn('<details class="day" open>', page)
