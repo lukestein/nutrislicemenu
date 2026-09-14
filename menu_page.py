@@ -84,23 +84,25 @@ def _day_card(
     menu_date: dt.date,
     menu_sections: dict[str, list[str]],
     compact_summary: str,
+    starts_new_week: bool = False,
 ) -> str:
     day_label = menu_date.strftime("%A")
     date_label = f"{menu_date:%b} {menu_date.day}"
+    day_classes = "day week-break" if starts_new_week else "day"
     source_url = (
         f"https://{school['district']}.nutrislice.com/menu/"
         f"{school['slug']}/lunch/{menu_date.isoformat()}"
     )
     if not has_menu(menu_sections):
         return f"""
-        <div class="day empty">
+        <div class="{day_classes} empty">
           <div class="day-name"><strong data-short="{menu_date:%a}">{day_label}</strong><span>{date_label}</span></div>
           <span class="empty-label">No menu posted</span>
         </div>"""
 
     compact_summary = format_web_summary(compact_summary, school["name"])
     return f"""
-        <details class="day">
+        <details class="{day_classes}">
           <summary>
             <span class="day-name"><strong data-short="{menu_date:%a}">{day_label}</strong><span>{date_label}</span></span>
             <span class="day-summary">{html.escape(compact_summary)}</span>
@@ -156,8 +158,13 @@ def render_menu_page(
                 menu_date,
                 menus.get(menu_date, {}),
                 summary_builder(school, menus.get(menu_date, {})),
+                starts_new_week=(
+                    index > 0
+                    and menu_date.isocalendar()[:2]
+                    != school_dates[index - 1].isocalendar()[:2]
+                ),
             )
-            for menu_date in school_dates
+            for index, menu_date in enumerate(school_dates)
         )
         if not school_dates:
             days = '<p class="school-empty">No upcoming menus are posted.</p>'
@@ -271,6 +278,7 @@ def render_menu_page(
     .days {{ padding:0 .55rem .65rem; }}
     .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
     .day {{ border-bottom:1px solid var(--line); }}
+    .day.week-break {{ margin-top:.55rem; border-top:3px solid var(--school-accent,var(--blue-2)); }}
     .day:last-child {{ border-bottom:0; }}
     details.day summary {{ display:grid; grid-template-columns:5rem 1fr 1rem; gap:.75rem; align-items:center; min-height:4.35rem; padding:.7rem .5rem; cursor:pointer; list-style:none; }}
     details.day summary::-webkit-details-marker {{ display:none; }}

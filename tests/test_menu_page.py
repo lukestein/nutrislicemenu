@@ -127,6 +127,27 @@ class MenuPageTests(unittest.TestCase):
         self.assertEqual(page.count("No upcoming menus are posted."), 2)
         self.assertNotIn("December 24–31, 2026", page)
 
+    def test_page_marks_new_week_after_holiday_gap(self):
+        menus = {
+            "angier-elementary": {
+                dt.date(2026, 9, 16): {"Lunch": ["Cheese Pizza"]},
+                dt.date(2026, 9, 22): {"Lunch": ["Chicken Tenders"]},
+            }
+        }
+        page = render_menu_page(
+            SCHOOLS[:1],
+            menus,
+            dt.date(2026, 9, 14),
+            dt.datetime(2026, 9, 14, 17, tzinfo=dt.timezone.utc),
+            event_summary,
+        )
+
+        self.assertEqual(page.count('<details class="day">'), 1)
+        self.assertEqual(page.count('<details class="day week-break">'), 1)
+        self.assertIn(
+            ".day.week-break { margin-top:.55rem; border-top:3px solid", page
+        )
+
     def test_single_school_page_has_simplified_header(self):
         menus = {
             "angier-elementary": {
