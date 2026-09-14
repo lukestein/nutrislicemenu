@@ -281,12 +281,13 @@ def render_menu_page(
     .school-actions .button {{ display:flex; align-items:center; justify-content:center; width:2.35rem; min-width:2.35rem; height:2.35rem; min-height:2.35rem; padding:.55rem; border-color:#cad5e4; background:#ffffff99; color:#36577f; }}
     .school-actions .button svg {{ display:block; width:100%; height:100%; fill:currentColor; }}
     .school-actions .google-calendar {{ color:#4285f4; }}
-    .school-actions .expand-toggle {{ color:#60708a; }}
+    .school-actions .expand-toggle {{ border-color:transparent; background:transparent; color:#60708a; }}
     .school-actions .expand-toggle svg {{ fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:transform .16s ease; }}
     .school-actions .expand-toggle[aria-expanded="true"] svg {{ transform:rotate(180deg); }}
     .school-actions .button:hover {{ border-color:#9cafc7; background:#eef3f8; color:var(--blue); }}
     .top .school-actions .button {{ border-color:#ffffff55; background:#ffffff12; color:#fff; }}
     .top .school-actions .button:hover {{ border-color:#ffffff88; background:#ffffff20; color:#fff; }}
+    .top .school-actions .expand-toggle {{ border-color:transparent; background:transparent; }}
     .button:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
     .days {{ padding:0 .55rem .65rem; }}
     .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
@@ -299,7 +300,7 @@ def render_menu_page(
     .day-name strong {{ font-size:.91rem; }}
     .day-name span {{ color:var(--muted); font-size:.76rem; }}
     .day-summary {{ font-size:.93rem; }}
-    .chevron {{ width:.55rem; height:.55rem; border-right:2px solid #718096; border-bottom:2px solid #718096; transform:rotate(45deg); transition:transform .16s ease; }}
+    .chevron {{ justify-self:end; width:.55rem; height:.55rem; border-right:2px solid #718096; border-bottom:2px solid #718096; transform:rotate(45deg); transition:transform .16s ease; }}
     details[open] .chevron {{ transform:rotate(225deg); }}
     .day-details {{ margin:0 .45rem .75rem 5.75rem; padding:.8rem .9rem; border-left:3px solid var(--orange); background:#f7f9fc; border-radius:0 10px 10px 0; }}
     .menu-section + .menu-section {{ margin-top:.85rem; }}
@@ -340,6 +341,45 @@ def render_menu_page(
       .school-actions {{ gap:.25rem; }}
       .school-actions .button {{ padding:.4rem; font-size:.82rem; }}
       .day-details {{ margin:0 .25rem .75rem; }}
+    }}
+    @media print {{
+      @page {{ size:letter portrait; margin:.4in; }}
+      :root {{ --ink:#000; --muted:#333; --paper:#fff; --wash:#fff; --line:#777; }}
+      html, body {{ background:#fff; color:#000; font-size:10pt; }}
+      body {{ line-height:1.3; }}
+      .top {{ background:none; color:#000; padding:0 0 .12in; border-bottom:2pt solid #000; }}
+      .top-row {{ align-items:flex-end; }}
+      h1 {{ font-size:20pt; letter-spacing:-.015em; }}
+      .week, .top-eyebrow, .eyebrow {{ color:#000; }}
+      .week {{ font-size:10pt; }}
+      .school-nav, .school-actions, .chevron, dialog, .source-link {{ display:none !important; }}
+      main {{ width:100%; margin:0; padding:.18in 0 0; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.18in; align-items:start; }}
+      main.single-school {{ grid-template-columns:1fr; }}
+      .school {{ border:1pt solid #555; border-radius:0; box-shadow:none; overflow:visible; }}
+      .school-heading {{ padding:.1in .12in; border-top:3pt solid #000; border-bottom:1pt solid #555; background:#fff; }}
+      h2 {{ font-size:15pt; }}
+      .days {{ padding:0 .1in .08in; }}
+      .day {{ border-bottom:.6pt solid #999; break-inside:avoid; }}
+      .day.week-break {{ margin-top:.08in; border-top:2pt solid #000; }}
+      details.day summary {{ grid-template-columns:.8in 1fr; gap:.08in; min-height:0; padding:.08in .04in; cursor:default; }}
+      .day-name strong {{ font-size:10pt; }}
+      .day-name span {{ color:#222; font-size:8.5pt; }}
+      .day-summary {{ font-size:9.5pt; line-height:1.28; }}
+      details.day[open] summary {{ display:block; padding-bottom:.04in; }}
+      details.day[open] .day-name {{ flex-direction:row; align-items:baseline; gap:.08in; }}
+      details.day[open] .day-summary {{ display:none; }}
+      details.day[open] .day-details {{ display:block !important; }}
+      .day-details {{ margin:0; padding:.02in .12in .09in; border:0; border-left:2pt solid #555; background:#fff; border-radius:0; }}
+      .menu-section + .menu-section {{ margin-top:.07in; }}
+      .menu-section h4 {{ margin-bottom:.02in; color:#000; font-size:8pt; }}
+      .menu-section ul {{ padding-left:.16in; }}
+      .menu-section li {{ margin:0; font-size:9pt; }}
+      .day.empty {{ min-height:0; padding:.08in .04in; }}
+      .empty-label {{ color:#222; font-size:9pt; }}
+      footer {{ width:100%; padding:.15in 0 0; color:#222; font-size:8pt; break-inside:avoid; }}
+      main:has(details[open]) {{ grid-template-columns:1fr; }}
+      main:has(details[open]) .school {{ break-after:page; }}
+      main:has(details[open]) .school:last-child {{ break-after:auto; }}
     }}
     @media (prefers-reduced-motion:reduce) {{ html {{ scroll-behavior:auto; }} .chevron, .expand-toggle svg {{ transition:none; }} }}
   </style>

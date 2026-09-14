@@ -104,6 +104,18 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn('aria-label="Expand all menus"', page)
         self.assertIn("const shouldExpand = menus.some", page)
         self.assertIn("grid-auto-columns:2.35rem", page)
+        self.assertIn(
+            ".expand-toggle { border-color:transparent; background:transparent;",
+            page,
+        )
+        self.assertIn(".chevron { justify-self:end;", page)
+        self.assertIn("@media print {", page)
+        self.assertIn(
+            ".school-nav, .school-actions, .chevron, dialog, .source-link "
+            "{ display:none !important; }",
+            page,
+        )
+        self.assertIn("main:has(details[open]) { grid-template-columns:1fr; }", page)
         self.assertNotIn('<p class="eyebrow">Lunch menu</p>', page)
         self.assertIn("#angier { --school-accent:#2f68a0;", page)
         self.assertIn("#brown { --school-accent:#8a623f;", page)
