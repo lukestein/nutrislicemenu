@@ -236,6 +236,7 @@ def render_menu_page(
       <div><p class="eyebrow top-eyebrow">Lunch menu</p><h1>{html.escape(school_name)}</h1><p class="week">{html.escape(date_range_label)}</p></div>
       {header_actions}"""
         main_class = ' class="single-school"'
+        footer_class = ' class="standalone-footer"'
         top_class = "top standalone-top"
         top_row_class = "top-row standalone-top-row"
     else:
@@ -245,6 +246,7 @@ def render_menu_page(
       <div><h1>School lunch menus</h1><p class="week">{html.escape(date_range_label)}</p></div>
       <nav class="school-nav" aria-label="Schools"><a href="#angier">Angier</a><a href="#brown">Brown</a></nav>"""
         main_class = ""
+        footer_class = ""
         top_class = "top"
         top_row_class = "top-row"
 
@@ -319,6 +321,7 @@ def render_menu_page(
     .day.empty {{ display:flex; align-items:center; justify-content:space-between; gap:1rem; min-height:4.35rem; padding:.7rem .5rem; }}
     .empty-label {{ color:var(--muted); font-size:.88rem; }}
     footer {{ width:min(70rem,100%); margin:0 auto; padding:.3rem 1rem 2rem; color:var(--muted); font-size:.78rem; }}
+    .standalone-footer {{ width:min(38rem,calc(100% - 1.2rem)); }}
     dialog {{ width:min(31rem,calc(100% - 2rem)); border:0; border-radius:17px; padding:1.25rem; color:var(--ink); box-shadow:0 24px 70px #08172c55; }}
     dialog::backdrop {{ background:#0c1d35aa; backdrop-filter:blur(2px); }}
     dialog h2 {{ margin-bottom:.8rem; }}
@@ -386,7 +389,7 @@ def render_menu_page(
       .menu-section li {{ margin:0; font-size:9pt; }}
       .day.empty {{ min-height:0; padding:.08in .04in; }}
       .empty-label {{ color:#222; font-size:9pt; }}
-      footer {{ width:100%; padding:.15in 0 0; color:#222; font-size:8pt; break-inside:avoid; }}
+      footer, .standalone-footer {{ width:100%; padding:.15in 0 0; color:#222; font-size:8pt; break-inside:avoid; }}
       main:has(details[open]) {{ grid-template-columns:1fr; }}
       main:has(details[open]) .school {{ break-after:page; }}
       main:has(details[open]) .school:last-child {{ break-after:auto; }}
@@ -401,7 +404,7 @@ def render_menu_page(
     </div>
   </header>
   <main{main_class}>{''.join(school_sections)}</main>
-  <footer>Menus are provided by Newton Public Schools via Nutrislice. Updated {html.escape(updated_label)} ET.</footer>
+  <footer{footer_class}>Menus are provided by Newton Public Schools via Nutrislice. Updated {html.escape(updated_label)} ET.</footer>
   {''.join(dialogs)}
   <script>
     document.querySelectorAll('[data-open-dialog]').forEach(function(button) {{
