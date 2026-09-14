@@ -35,7 +35,7 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(ANGIER, sections),
-            "Angier: cheese 🍕, cheese stuffed breadsticks, chicken caesar 🥗",
+            "Angier: Cheese 🍕, cheese stuffed breadsticks, chicken caesar 🥗",
         )
 
     def test_brown_removes_staples_but_keeps_rotating_station_items(self):
@@ -53,8 +53,22 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(BROWN, sections),
-            "Brown: baked falafel flatbread, margherita 🍕, "
+            "Brown: Baked falafel flatbread, margherita 🍕, "
             "🌭, BBQ cheddar chicken sandwich",
+        )
+
+    def test_summary_capitalizes_first_menu_item_for_each_school(self):
+        sections = {
+            "Lunch": ["Tempura Style Chicken Nuggets", "Jalapeno Carnita Pizza"]
+        }
+
+        self.assertEqual(
+            calendar_feed.event_summary(BROWN, sections),
+            "Brown: Tempura style chicken nuggets, jalapeno carnita 🍕",
+        )
+        self.assertEqual(
+            calendar_feed.event_summary(ANGIER, sections),
+            "Angier: Tempura style chicken nuggets, jalapeno carnita 🍕",
         )
 
     def test_compact_names_use_food_emoji(self):
@@ -73,7 +87,7 @@ class SummaryTests(unittest.TestCase):
 
         self.assertEqual(
             calendar_feed.event_summary(ANGIER, sections),
-            "Angier: tacos, 🍕, pasta, panini, black bean burger",
+            "Angier: Tacos, 🍕, pasta, panini, black bean burger",
         )
 
 
@@ -116,7 +130,7 @@ class CalendarTests(unittest.TestCase):
         self.assertIn("DTEND;VALUE=DATE:20260915", calendar)
         self.assertIn("X-WR-TIMEZONE:America/New_York", calendar)
         self.assertIn("TRANSP:TRANSPARENT", calendar)
-        self.assertIn("SUMMARY:Angier: cheese 🍕", calendar)
+        self.assertIn("SUMMARY:Angier: Cheese 🍕", calendar)
         self.assertNotIn("Weekend Pizza", calendar)
         self.assertTrue(calendar.endswith("END:VCALENDAR\r\n"))
 
