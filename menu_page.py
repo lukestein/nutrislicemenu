@@ -304,7 +304,7 @@ def render_menu_page(
       .school-nav {{ display:flex; }}
       details.day summary {{ grid-template-columns:4rem 1fr .9rem; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
       .day-name strong {{ font-size:0; }}
-      .day-name strong::after {{ content:attr(data-short); font-size:1rem; }}
+      .day-name strong::after {{ content:attr(data-short); font-size:1.1rem; }}
       .day-name span {{ font-size:.82rem; }}
       .day-summary {{ font-size:1rem; line-height:1.42; }}
       .empty-label {{ font-size:.94rem; }}
