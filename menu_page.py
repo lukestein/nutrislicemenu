@@ -20,12 +20,13 @@ WEB_SUMMARY_REPLACEMENTS = {
 MENU_DAY_ROLLOVER_HOUR = 13
 # Web-only labels for Brown's recurring 2Mato and Grill mains. An item is shown
 # in the "Every day" row only if one of its posted names occurs on every
-# displayed Brown menu day; the vegetarian burger changes names by week.
+# displayed Brown menu day; two distinct vegetarian burgers have appeared in
+# that recurring Grill slot on different weeks.
 BROWN_EVERYDAY_MAINS = (
     ("Cheese pizza", "2Mato", ("Classic Cheese Pizza",)),
     ("Pepperoni pizza", "2Mato", ("Traditional Pepperoni Pizza",)),
     ("Cheeseburger", "Grill", ("Classic American Cheeseburger",)),
-    ("Veggie burger", "Grill", ("Veggie Burger", "Black Bean Burger")),
+    ("Veggie/black bean burger", "Grill", ("Veggie Burger", "Black Bean Burger")),
     ("Crispy chicken patty sandwich", "Grill", ("Crispy Chicken Patty Sandwich",)),
 )
 

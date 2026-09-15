@@ -33,8 +33,8 @@ SUMMARY_RULES = {
     },
     "brown-middle-school": {
         "exact": {
-            # Daily 2Mato and Grill staples. The vegetarian burger changed
-            # names during the month, but one version remains available daily.
+            # Daily 2Mato and Grill staples. Distinct vegetarian burgers have
+            # appeared in the same recurring Grill slot on different weeks.
             "Classic Cheese Pizza",
             "Traditional Pepperoni Pizza",
             "Classic American Cheeseburger",
