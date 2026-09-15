@@ -18,6 +18,16 @@ WEB_SUMMARY_REPLACEMENTS = {
     "🥗": "salad",
 }
 MENU_DAY_ROLLOVER_HOUR = 13
+# Web-only labels for Brown's recurring 2Mato and Grill mains. An item is shown
+# in the "Every day" row only if one of its posted names occurs on every
+# displayed Brown menu day; the vegetarian burger changes names by week.
+BROWN_EVERYDAY_MAINS = (
+    ("Cheese pizza", "2Mato", ("Classic Cheese Pizza",)),
+    ("Pepperoni pizza", "2Mato", ("Traditional Pepperoni Pizza",)),
+    ("Cheeseburger", "Grill", ("Classic American Cheeseburger",)),
+    ("Veggie burger", "Grill", ("Veggie Burger", "Black Bean Burger")),
+    ("Crispy chicken patty sandwich", "Grill", ("Crispy Chicken Patty Sandwich",)),
+)
 
 
 def displayed_menu_dates(
@@ -117,6 +127,33 @@ def _day_card(
         </details>"""
 
 
+def _brown_everyday_card(
+    school_dates: list[dt.date],
+    menus: dict[dt.date, dict[str, list[str]]],
+) -> str:
+    """Show only Brown mains posted on every day in the visible window."""
+    if len(school_dates) < 2:
+        return ""
+    labels = []
+    for label, section, names in BROWN_EVERYDAY_MAINS:
+        possible_names = {name.casefold() for name in names}
+        if all(
+            possible_names.intersection(
+                food.casefold() for food in menus[menu_date].get(section, [])
+            )
+            for menu_date in school_dates
+        ):
+            labels.append(label)
+    if not labels:
+        return ""
+    summary = html.escape("\u00a0· ".join(labels))
+    return f"""
+        <div class="day everyday">
+          <span class="day-name"><strong>Every day</strong></span>
+          <span class="day-summary">{summary}</span>
+        </div>"""
+
+
 def render_menu_page(
     schools: list[dict[str, str]],
     menus_by_school: dict[str, dict[dt.date, dict[str, list[str]]]],
@@ -168,6 +205,8 @@ def render_menu_page(
             )
             for index, menu_date in enumerate(school_dates)
         )
+        if slug == "brown-middle-school":
+            days += _brown_everyday_card(school_dates, menus)
         if not school_dates:
             days = '<p class="school-empty">No upcoming menus are posted.</p>'
         expand_action = ""
@@ -304,6 +343,8 @@ def render_menu_page(
     .day {{ border-bottom:1px solid var(--line); }}
     .day:has(+ .day.week-break) {{ border-bottom:0; }}
     .day.week-break {{ margin-top:.55rem; border-top:3px solid var(--school-accent,var(--blue-2)); }}
+    .day:has(+ .day.everyday) {{ border-bottom:0; }}
+    .day.everyday {{ display:grid; grid-template-columns:5rem 1fr; gap:.75rem; align-items:center; min-height:4.35rem; margin-top:.55rem; padding:.7rem .5rem; border-top:2px solid var(--school-accent,var(--blue-2)); }}
     .day:last-child {{ border-bottom:0; }}
     details.day summary {{ display:grid; grid-template-columns:5rem 1fr 1rem; gap:.75rem; align-items:center; min-height:4.35rem; padding:.7rem .5rem; cursor:pointer; list-style:none; }}
     details.day summary::-webkit-details-marker {{ display:none; }}
@@ -338,8 +379,10 @@ def render_menu_page(
       main {{ grid-template-columns:1fr; padding:.6rem; gap:.6rem; }}
       .school-nav {{ display:flex; }}
       details.day summary {{ grid-template-columns:4rem 1fr .9rem; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
+      .day.everyday {{ grid-template-columns:4rem 1fr; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
       .day-name strong {{ font-size:0; }}
       .day-name strong::after {{ content:attr(data-short); font-size:1.1rem; }}
+      .day.everyday .day-name strong {{ font-size:1.1rem; }}
       .day-name span {{ font-size:.82rem; }}
       .day-summary {{ font-size:1rem; line-height:1.42; }}
       .empty-label {{ font-size:.94rem; }}
@@ -374,8 +417,10 @@ def render_menu_page(
       .days {{ padding:0 .1in .08in; }}
       .day {{ border-bottom:.6pt solid #999; break-inside:avoid; }}
       .day.week-break {{ margin-top:.08in; border-top:2pt solid #000; }}
+      .day.everyday {{ grid-template-columns:1in 1fr; gap:.08in; min-height:0; margin-top:.08in; padding:.08in .04in; border-top:1.5pt solid #000; }}
       details.day summary {{ grid-template-columns:1in 1fr; gap:.08in; min-height:0; padding:.08in .04in; cursor:default; }}
       .day-name strong {{ font-size:10pt; }}
+      .day.everyday .day-name strong {{ font-size:10pt; }}
       .day-name strong::after {{ content:none; }}
       .day-name span {{ color:#222; font-size:8.5pt; }}
       .day-summary {{ font-size:9.5pt; line-height:1.28; }}
