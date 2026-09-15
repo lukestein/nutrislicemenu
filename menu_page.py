@@ -147,7 +147,10 @@ def _brown_everyday_footer(
             labels.append(label)
     if not labels:
         return ""
-    summary = html.escape("\u00a0· ".join(labels))
+    # <wbr> permits a wrap after a slash without introducing visible space.
+    summary = "\u00a0· ".join(
+        html.escape(label).replace("/", "/<wbr>") for label in labels
+    )
     return f"""
         <div class="everyday-footer">
           <span class="day-name"><strong>Every day</strong></span>
