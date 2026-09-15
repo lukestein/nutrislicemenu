@@ -221,7 +221,7 @@ class MenuPageTests(unittest.TestCase):
                 self.assertEqual(page.count('<div class="everyday-footer">'), 1)
                 self.assertIn(
                     "Cheese pizza\u00a0· Pepperoni pizza\u00a0· Cheeseburger"
-                    "\u00a0· Veggie burger\u00a0· Crispy chicken patty sandwich",
+                    "\u00a0· Veggie/black bean burger\u00a0· Crispy chicken patty sandwich",
                     page,
                 )
                 self.assertIn(
