@@ -75,7 +75,8 @@ def compact_food_name(food_name: str) -> str:
         )
     for pattern, replacement in SUMMARY_EMOJI_REPLACEMENTS:
         compact = re.sub(pattern, replacement, compact, flags=re.IGNORECASE)
-    return typographic_text(compact)
+    # Keep an ampersand with the preceding word in calendar and web summaries.
+    return typographic_text(compact).replace(" & ", "\u00a0& ")
 
 
 def _capitalize_first_letter(value: str) -> str:
