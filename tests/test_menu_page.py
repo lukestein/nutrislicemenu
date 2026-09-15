@@ -332,6 +332,25 @@ class MenuPageTests(unittest.TestCase):
             "Hot dog",
         )
 
+    def test_web_headers_keep_ampersands_with_the_previous_word(self):
+        menu_date = dt.date(2026, 9, 14)
+        page = render_menu_page(
+            SCHOOLS,
+            {
+                "angier-elementary": {
+                    menu_date: {"Lunch": ["Muffin, Goldfish & Yogurt Fun Lunch"]}
+                },
+                "brown-middle-school": {
+                    menu_date: {"Create": ["Citrus Kidney & Garbanzo Bean Salad"]}
+                },
+            },
+            dt.date(2026, 9, 13),
+            dt.datetime(2026, 9, 13, 18, tzinfo=dt.timezone.utc),
+            event_summary,
+        )
+        self.assertIn("Muffin, Goldfish\u00a0&amp; yogurt fun lunch", page)
+        self.assertIn("Citrus kidney\u00a0&amp; garbanzo bean salad", page)
+
     def test_page_escapes_menu_content(self):
         menus = {
             "angier-elementary": {

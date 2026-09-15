@@ -88,14 +88,23 @@ class SummaryTests(unittest.TestCase):
             calendar_feed.compact_food_name(
                 "Muffin, Goldfish & Yogurt Fun Lunch"
             ),
-            "muffin, Goldfish & yogurt fun lunch",
+            "muffin, Goldfish\u00a0& yogurt fun lunch",
         )
         self.assertEqual(
             calendar_feed.event_summary(
                 ANGIER,
                 {"Lunch": ["Muffin, Goldfish & Yogurt Fun Lunch"]},
             ),
-            "Angier: Muffin, Goldfish & yogurt fun lunch",
+            "Angier: Muffin, Goldfish\u00a0& yogurt fun lunch",
+        )
+
+    def test_ampersand_stays_with_previous_word_in_compact_titles(self):
+        self.assertEqual(
+            calendar_feed.event_summary(
+                BROWN,
+                {"Create": ["Citrus Kidney & Garbanzo Bean Salad"]},
+            ),
+            "Brown: Citrus kidney\u00a0& garbanzo bean 🥗",
         )
 
     def test_summary_does_not_truncate_at_four_short_items(self):
