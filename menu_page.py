@@ -127,7 +127,7 @@ def _day_card(
         </details>"""
 
 
-def _brown_everyday_card(
+def _brown_everyday_footer(
     school_dates: list[dt.date],
     menus: dict[dt.date, dict[str, list[str]]],
 ) -> str:
@@ -148,7 +148,7 @@ def _brown_everyday_card(
         return ""
     summary = html.escape("\u00a0· ".join(labels))
     return f"""
-        <div class="day everyday">
+        <div class="everyday-footer">
           <span class="day-name"><strong>Every day</strong></span>
           <span class="day-summary">{summary}</span>
         </div>"""
@@ -205,8 +205,11 @@ def render_menu_page(
             )
             for index, menu_date in enumerate(school_dates)
         )
-        if slug == "brown-middle-school":
-            days += _brown_everyday_card(school_dates, menus)
+        everyday_footer = (
+            _brown_everyday_footer(school_dates, menus)
+            if slug == "brown-middle-school"
+            else ""
+        )
         if not school_dates:
             days = '<p class="school-empty">No upcoming menus are posted.</p>'
         expand_action = ""
@@ -243,6 +246,7 @@ def render_menu_page(
       <section class="school" id="{html.escape(name.lower())}">
         {school_heading}
         <div class="days">{days}</div>
+        {everyday_footer}
       </section>"""
         )
         dialogs.append(
@@ -339,12 +343,12 @@ def render_menu_page(
     .top .school-actions .expand-toggle {{ border-color:transparent; background:transparent; }}
     .button:focus-visible, .school-page-link:focus-visible, summary:focus-visible, .dialog-close:focus-visible {{ outline:3px solid var(--orange); outline-offset:2px; }}
     .days {{ padding:0 .55rem .65rem; }}
+    .days:has(+ .everyday-footer) {{ padding-bottom:0; }}
     .school-empty {{ margin:0; padding:1.25rem .5rem .7rem; color:var(--muted); }}
     .day {{ border-bottom:1px solid var(--line); }}
     .day:has(+ .day.week-break) {{ border-bottom:0; }}
     .day.week-break {{ margin-top:.55rem; border-top:3px solid var(--school-accent,var(--blue-2)); }}
-    .day:has(+ .day.everyday) {{ border-bottom:0; }}
-    .day.everyday {{ display:grid; grid-template-columns:5rem 1fr; gap:.75rem; align-items:center; min-height:4.35rem; margin-top:.55rem; padding:.7rem .5rem; border-top:2px solid var(--school-accent,var(--blue-2)); }}
+    .everyday-footer {{ display:grid; grid-template-columns:5rem 1fr; gap:.75rem; align-items:center; min-height:4rem; padding:.8rem 1.1rem; background:var(--school-tint); }}
     .day:last-child {{ border-bottom:0; }}
     details.day summary {{ display:grid; grid-template-columns:5rem 1fr 1rem; gap:.75rem; align-items:center; min-height:4.35rem; padding:.7rem .5rem; cursor:pointer; list-style:none; }}
     details.day summary::-webkit-details-marker {{ display:none; }}
@@ -379,10 +383,10 @@ def render_menu_page(
       main {{ grid-template-columns:1fr; padding:.6rem; gap:.6rem; }}
       .school-nav {{ display:flex; }}
       details.day summary {{ grid-template-columns:4rem 1fr .9rem; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
-      .day.everyday {{ grid-template-columns:4rem 1fr; gap:.55rem; min-height:4.6rem; padding:.78rem .5rem; }}
+      .everyday-footer {{ grid-template-columns:4rem 1fr; gap:.55rem; min-height:4.2rem; padding:.78rem 1.1rem; }}
       .day-name strong {{ font-size:0; }}
       .day-name strong::after {{ content:attr(data-short); font-size:1.1rem; }}
-      .day.everyday .day-name strong {{ font-size:1.1rem; }}
+      .everyday-footer .day-name strong {{ font-size:1.1rem; }}
       .day-name span {{ font-size:.82rem; }}
       .day-summary {{ font-size:1rem; line-height:1.42; }}
       .empty-label {{ font-size:.94rem; }}
@@ -415,12 +419,13 @@ def render_menu_page(
       .school-heading {{ padding:.1in .12in; border-top:3pt solid #000; border-bottom:1pt solid #555; background:#fff; }}
       h2 {{ font-size:15pt; }}
       .days {{ padding:0 .1in .08in; }}
+      .days:has(+ .everyday-footer) {{ padding-bottom:0; }}
       .day {{ border-bottom:.6pt solid #999; break-inside:avoid; }}
       .day.week-break {{ margin-top:.08in; border-top:2pt solid #000; }}
-      .day.everyday {{ grid-template-columns:1in 1fr; gap:.08in; min-height:0; margin-top:.08in; padding:.08in .04in; border-top:1.5pt solid #000; }}
+      .everyday-footer {{ grid-template-columns:1in 1fr; gap:.08in; min-height:0; padding:.08in .14in; border-top:1pt solid #555; background:#eee; break-inside:avoid; print-color-adjust:exact; }}
       details.day summary {{ grid-template-columns:1in 1fr; gap:.08in; min-height:0; padding:.08in .04in; cursor:default; }}
       .day-name strong {{ font-size:10pt; }}
-      .day.everyday .day-name strong {{ font-size:10pt; }}
+      .everyday-footer .day-name strong {{ font-size:10pt; }}
       .day-name strong::after {{ content:none; }}
       .day-name span {{ color:#222; font-size:8.5pt; }}
       .day-summary {{ font-size:9.5pt; line-height:1.28; }}

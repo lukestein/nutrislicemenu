@@ -218,19 +218,25 @@ class MenuPageTests(unittest.TestCase):
                     dt.datetime(2026, 9, 15, 16, tzinfo=dt.timezone.utc),
                     event_summary,
                 )
-                self.assertEqual(page.count('<div class="day everyday">'), 1)
+                self.assertEqual(page.count('<div class="everyday-footer">'), 1)
                 self.assertIn(
                     "Cheese pizza\u00a0· Pepperoni pizza\u00a0· Cheeseburger"
                     "\u00a0· Veggie burger\u00a0· Crispy chicken patty sandwich",
                     page,
                 )
-                self.assertIn(".day:has(+ .day.everyday) { border-bottom:0; }", page)
-                self.assertIn(".day.everyday { grid-template-columns:1in 1fr;", page)
                 self.assertIn(
-                    ".day.everyday .day-name strong { font-size:1.1rem; }", page
+                    ".days:has(+ .everyday-footer) { padding-bottom:0; }", page
                 )
                 self.assertIn(
-                    ".day.everyday .day-name strong { font-size:10pt; }", page
+                    ".everyday-footer { grid-template-columns:1in 1fr;", page
+                )
+                self.assertIn("background:var(--school-tint);", page)
+                self.assertNotIn(".day:has(+ .day.everyday)", page)
+                self.assertIn(
+                    ".everyday-footer .day-name strong { font-size:1.1rem; }", page
+                )
+                self.assertIn(
+                    ".everyday-footer .day-name strong { font-size:10pt; }", page
                 )
                 self.assertNotIn('<details class="day everyday">', page)
 
@@ -241,7 +247,7 @@ class MenuPageTests(unittest.TestCase):
             dt.datetime(2026, 9, 15, 16, tzinfo=dt.timezone.utc),
             event_summary,
         )
-        self.assertNotIn('<div class="day everyday">', angier_page)
+        self.assertNotIn('<div class="everyday-footer">', angier_page)
 
     def test_brown_everyday_row_requires_multiple_days_and_each_item_on_all_days(self):
         first_day = dt.date(2026, 9, 15)
@@ -258,7 +264,7 @@ class MenuPageTests(unittest.TestCase):
         one_day_page = render_menu_page(
             SCHOOLS[1:], menus, first_day, generated_at, event_summary
         )
-        self.assertNotIn('<div class="day everyday">', one_day_page)
+        self.assertNotIn('<div class="everyday-footer">', one_day_page)
 
         menus["brown-middle-school"][second_day] = {
             "2Mato": ["Classic Cheese Pizza"],
@@ -267,7 +273,7 @@ class MenuPageTests(unittest.TestCase):
         two_day_page = render_menu_page(
             SCHOOLS[1:], menus, first_day, generated_at, event_summary
         )
-        self.assertIn('<div class="day everyday">', two_day_page)
+        self.assertIn('<div class="everyday-footer">', two_day_page)
         self.assertIn("Cheese pizza\u00a0· Cheeseburger", two_day_page)
         self.assertNotIn("Pepperoni pizza\u00a0· Cheeseburger", two_day_page)
 
