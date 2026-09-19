@@ -191,11 +191,8 @@ class MenuPageTests(unittest.TestCase):
             ".source-link { display:none !important; }",
             page,
         )
-        self.assertIn('<strong aria-current="page">Upcoming</strong>', page)
-        self.assertIn(
-            'href="https://lukestein.com/nutrislicemenu/this-week/">This week</a>',
-            page,
-        )
+        self.assertNotIn(">Upcoming<", page)
+        self.assertIn('<strong aria-current="page">This week</strong>', page)
         self.assertIn(
             'href="https://lukestein.com/nutrislicemenu/next-week/">Next week</a>',
             page,
@@ -238,6 +235,44 @@ class MenuPageTests(unittest.TestCase):
         )
         self.assertNotIn("Angier: cheese", page)
         self.assertNotIn('<footer class="standalone-footer">', page)
+
+    def test_upcoming_link_appears_when_it_differs_from_this_week(self):
+        menus = {
+            "angier-elementary": {
+                dt.date(2026, 9, 14): {"Lunch": ["Monday Meal"]},
+                dt.date(2026, 9, 21): {"Lunch": ["Following Monday Meal"]},
+            }
+        }
+        generated_at = dt.datetime(2026, 9, 14, 16, tzinfo=dt.timezone.utc)
+        upcoming_page = render_menu_page(
+            SCHOOLS[:1],
+            menus,
+            dt.date(2026, 9, 14),
+            generated_at,
+            event_summary,
+        )
+        self.assertIn('<strong aria-current="page">Upcoming</strong>', upcoming_page)
+        self.assertIn(
+            'href="https://lukestein.com/nutrislicemenu/angier/this-week/">'
+            "This week</a>",
+            upcoming_page,
+        )
+
+        this_week_page = render_menu_page(
+            SCHOOLS[:1],
+            menus,
+            dt.date(2026, 9, 14),
+            generated_at,
+            event_summary,
+            view="this-week",
+        )
+        self.assertIn(
+            'href="https://lukestein.com/nutrislicemenu/angier/">Upcoming</a>',
+            this_week_page,
+        )
+        self.assertIn(
+            '<strong aria-current="page">This week</strong>', this_week_page
+        )
 
     def test_page_has_clear_empty_state_when_no_menus_are_posted(self):
         page = render_menu_page(

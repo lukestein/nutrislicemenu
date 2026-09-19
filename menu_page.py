@@ -77,14 +77,20 @@ def _view_base_url(standalone_school: dict[str, str] | None) -> str:
 
 
 def _week_view_navigation(
-    standalone_school: dict[str, str] | None, current_view: str
+    standalone_school: dict[str, str] | None,
+    current_view: str,
+    upcoming_matches_this_week: bool,
 ) -> str:
     base_url = _view_base_url(standalone_school)
-    views = (
+    views = [
         ("upcoming", "Upcoming", f"{base_url}/"),
         ("this-week", "This week", f"{base_url}/this-week/"),
         ("next-week", "Next week", f"{base_url}/next-week/"),
-    )
+    ]
+    if upcoming_matches_this_week:
+        views = views[1:]
+        if current_view == "upcoming":
+            current_view = "this-week"
     items = []
     for view, label, url in views:
         if view == current_view:
@@ -96,6 +102,21 @@ def _week_view_navigation(
         + '<span aria-hidden="true">·</span>'.join(items)
         + "</nav>"
     )
+
+
+def _available_menu_dates(
+    schools: list[dict[str, str]],
+    menus_by_school: dict[str, dict[dt.date, dict[str, list[str]]]],
+    eligible_dates: list[dt.date],
+) -> list[dt.date]:
+    return [
+        menu_date
+        for menu_date in eligible_dates
+        if any(
+            has_menu(menus_by_school.get(school["slug"], {}).get(menu_date, {}))
+            for school in schools
+        )
+    ]
 
 
 def format_date_range(first_date: dt.date, last_date: dt.date) -> str:
@@ -221,14 +242,16 @@ def render_menu_page(
     """Return a self-contained weekly menu and subscription page."""
     standalone_school = schools[0] if len(schools) == 1 else None
     eligible_dates = menu_dates_for_view(today, generated_at, view)
-    dates = [
-        menu_date
-        for menu_date in eligible_dates
-        if any(
-            has_menu(menus_by_school.get(school["slug"], {}).get(menu_date, {}))
-            for school in schools
-        )
-    ]
+    dates = _available_menu_dates(schools, menus_by_school, eligible_dates)
+    upcoming_matches_this_week = _available_menu_dates(
+        schools,
+        menus_by_school,
+        menu_dates_for_view(today, generated_at, "upcoming"),
+    ) == _available_menu_dates(
+        schools,
+        menus_by_school,
+        menu_dates_for_view(today, generated_at, "this-week"),
+    )
     date_range_label = (
         format_date_range(dates[0], dates[-1])
         if dates
@@ -351,7 +374,9 @@ def render_menu_page(
         top_class = "top"
         top_row_class = "top-row"
 
-    week_view_navigation = _week_view_navigation(standalone_school, view)
+    week_view_navigation = _week_view_navigation(
+        standalone_school, view, upcoming_matches_this_week
+    )
 
     return f"""<!doctype html>
 <html lang="en">
