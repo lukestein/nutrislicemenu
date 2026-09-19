@@ -46,6 +46,57 @@ def displayed_menu_dates(
     ]
 
 
+def week_menu_dates(today: dt.date, following: bool = False) -> list[dt.date]:
+    """Return one Monday-Friday week, advancing weekends to Monday."""
+    if today.weekday() >= 5:
+        monday = today + dt.timedelta(days=7 - today.weekday())
+    else:
+        monday = today - dt.timedelta(days=today.weekday())
+    if following:
+        monday += dt.timedelta(weeks=1)
+    return [monday + dt.timedelta(days=offset) for offset in range(5)]
+
+
+def menu_dates_for_view(
+    today: dt.date, generated_at: dt.datetime, view: str
+) -> list[dt.date]:
+    """Return eligible dates for a rolling or fixed-week web view."""
+    if view == "upcoming":
+        return displayed_menu_dates(today, generated_at)
+    if view == "this-week":
+        return week_menu_dates(today)
+    if view == "next-week":
+        return week_menu_dates(today, following=True)
+    raise ValueError(f"Unknown menu view: {view}")
+
+
+def _view_base_url(standalone_school: dict[str, str] | None) -> str:
+    if standalone_school:
+        return f"{PUBLIC_BASE_URL}/{standalone_school['name'].lower()}"
+    return PUBLIC_BASE_URL
+
+
+def _week_view_navigation(
+    standalone_school: dict[str, str] | None, current_view: str
+) -> str:
+    base_url = _view_base_url(standalone_school)
+    views = (
+        ("upcoming", "Upcoming", f"{base_url}/"),
+        ("this-week", "This week", f"{base_url}/this-week/"),
+        ("next-week", "Next week", f"{base_url}/next-week/"),
+    )
+    items = []
+    for view, label, url in views:
+        if view == current_view:
+            items.append(f'<strong aria-current="page">{label}</strong>')
+        else:
+            items.append(f'<a href="{html.escape(url)}">{label}</a>')
+    return (
+        '<nav class="week-views" aria-label="Menu week">'
+        '<span>View:</span>' + '<span aria-hidden="true">·</span>'.join(items) + "</nav>"
+    )
+
+
 def format_date_range(first_date: dt.date, last_date: dt.date) -> str:
     if first_date == last_date:
         return f"{first_date:%B} {first_date.day}, {first_date.year}"
@@ -164,10 +215,11 @@ def render_menu_page(
     today: dt.date,
     generated_at: dt.datetime,
     summary_builder: Callable[[dict[str, str], dict[str, list[str]]], str],
+    view: str = "upcoming",
 ) -> str:
     """Return a self-contained weekly menu and subscription page."""
     standalone_school = schools[0] if len(schools) == 1 else None
-    eligible_dates = displayed_menu_dates(today, generated_at)
+    eligible_dates = menu_dates_for_view(today, generated_at, view)
     dates = [
         menu_date
         for menu_date in eligible_dates
@@ -239,7 +291,8 @@ def render_menu_page(
         if standalone_school:
             header_actions = school_actions
         else:
-            school_page_url = f"{PUBLIC_BASE_URL}/{name.lower()}/"
+            view_suffix = "" if view == "upcoming" else f"{view}/"
+            school_page_url = f"{PUBLIC_BASE_URL}/{name.lower()}/{view_suffix}"
             school_heading = f"""
         <div class="school-heading">
           <h2><a class="school-page-link" href="{html.escape(school_page_url)}">{html.escape(name)}</a></h2>
@@ -296,6 +349,8 @@ def render_menu_page(
         footer_class = ""
         top_class = "top"
         top_row_class = "top-row"
+
+    week_view_navigation = _week_view_navigation(standalone_school, view)
 
     return f"""<!doctype html>
 <html lang="en">
@@ -372,6 +427,9 @@ def render_menu_page(
     .empty-label {{ color:var(--muted); font-size:.88rem; }}
     footer {{ width:min(70rem,100%); margin:0 auto; padding:.3rem 1rem 2rem; color:var(--muted); font-size:.78rem; }}
     .standalone-footer {{ width:min(38rem,calc(100% - 1.2rem)); }}
+    .week-views {{ display:flex; flex-wrap:wrap; align-items:center; gap:.35rem; margin:0 0 .55rem; padding:0 0 .55rem; border-bottom:1px solid var(--line); }}
+    .week-views a {{ color:var(--blue-2); font-weight:700; text-underline-offset:.13em; }}
+    .week-views strong {{ color:var(--ink); }}
     dialog {{ width:min(31rem,calc(100% - 2rem)); border:0; border-radius:17px; padding:1.25rem; color:var(--ink); box-shadow:0 24px 70px #08172c55; }}
     dialog::backdrop {{ background:#0c1d35aa; backdrop-filter:blur(2px); }}
     dialog h2 {{ margin-bottom:.8rem; }}
@@ -416,7 +474,7 @@ def render_menu_page(
       h1 {{ font-size:20pt; letter-spacing:-.015em; }}
       .week, .top-eyebrow, .eyebrow {{ color:#000; }}
       .week {{ font-size:10pt; }}
-      .school-nav, .school-actions, .chevron, dialog, .source-link {{ display:none !important; }}
+      .school-nav, .school-actions, .week-views, .chevron, dialog, .source-link {{ display:none !important; }}
       main {{ width:100%; margin:0; padding:.18in 0 0; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.18in; align-items:start; }}
       main.single-school {{ grid-template-columns:1fr; }}
       .school {{ border:1pt solid #555; border-radius:0; box-shadow:none; overflow:visible; }}
@@ -459,7 +517,10 @@ def render_menu_page(
     </div>
   </header>
   <main{main_class}>{''.join(school_sections)}</main>
-  <footer{footer_class}>Menus are provided by Newton Public Schools via Nutrislice. Updated {html.escape(updated_label)} ET.</footer>
+  <footer{footer_class}>
+    {week_view_navigation}
+    <div>Menus are provided by Newton Public Schools via Nutrislice. Updated {html.escape(updated_label)} ET.</div>
+  </footer>
   {''.join(dialogs)}
   <script>
     document.querySelectorAll('[data-open-dialog]').forEach(function(button) {{

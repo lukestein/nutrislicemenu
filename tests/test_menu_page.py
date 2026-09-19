@@ -6,7 +6,9 @@ from menu_page import (
     displayed_menu_dates,
     format_date_range,
     format_web_summary,
+    menu_dates_for_view,
     render_menu_page,
+    week_menu_dates,
 )
 
 
@@ -46,6 +48,78 @@ class MenuPageTests(unittest.TestCase):
                 dt.date(2026, 9, 24),
                 dt.date(2026, 9, 25),
             ],
+        )
+
+    def test_week_views_use_whole_monday_to_friday_weeks(self):
+        generated_at = dt.datetime(2026, 9, 19, 18, tzinfo=dt.timezone.utc)
+        self.assertEqual(
+            week_menu_dates(dt.date(2026, 9, 16)),
+            [dt.date(2026, 9, day) for day in range(14, 19)],
+        )
+        self.assertEqual(
+            menu_dates_for_view(
+                dt.date(2026, 9, 19), generated_at, "this-week"
+            ),
+            [dt.date(2026, 9, day) for day in range(21, 26)],
+        )
+        self.assertEqual(
+            menu_dates_for_view(
+                dt.date(2026, 9, 19), generated_at, "next-week"
+            ),
+            [
+                dt.date(2026, 9, 28),
+                dt.date(2026, 9, 29),
+                dt.date(2026, 9, 30),
+                dt.date(2026, 10, 1),
+                dt.date(2026, 10, 2),
+            ],
+        )
+
+    def test_page_week_views_show_only_the_selected_week(self):
+        menus = {
+            "angier-elementary": {
+                dt.date(2026, 9, 18): {"Lunch": ["Old Week Meal"]},
+                dt.date(2026, 9, 21): {"Lunch": ["This Week Meal"]},
+                dt.date(2026, 9, 28): {"Lunch": ["Next Week Meal"]},
+            }
+        }
+        generated_at = dt.datetime(2026, 9, 19, 18, tzinfo=dt.timezone.utc)
+        this_week_page = render_menu_page(
+            SCHOOLS[:1],
+            menus,
+            dt.date(2026, 9, 19),
+            generated_at,
+            event_summary,
+            view="this-week",
+        )
+        self.assertIn("This week meal", this_week_page)
+        self.assertNotIn("Old week meal", this_week_page)
+        self.assertNotIn("Next week meal", this_week_page)
+        self.assertIn('<strong aria-current="page">This week</strong>', this_week_page)
+        self.assertIn(
+            'href="https://lukestein.com/nutrislicemenu/angier/next-week/"',
+            this_week_page,
+        )
+
+        next_week_page = render_menu_page(
+            SCHOOLS,
+            menus,
+            dt.date(2026, 9, 19),
+            generated_at,
+            event_summary,
+            view="next-week",
+        )
+        self.assertIn("Next week meal", next_week_page)
+        self.assertNotIn("This week meal", next_week_page)
+        self.assertIn('<strong aria-current="page">Next week</strong>', next_week_page)
+        self.assertIn(
+            'href="https://lukestein.com/nutrislicemenu/angier/next-week/"',
+            next_week_page,
+        )
+        self.assertIn(
+            ".school-nav, .school-actions, .week-views, .chevron, dialog, "
+            ".source-link { display:none !important; }",
+            next_week_page,
         )
 
     def test_date_range_handles_one_day_and_year_boundaries(self):
@@ -113,8 +187,17 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn(".day-name strong::after { content:none; }", page)
         self.assertIn("grid-template-columns:1in 1fr;", page)
         self.assertIn(
-            ".school-nav, .school-actions, .chevron, dialog, .source-link "
-            "{ display:none !important; }",
+            ".school-nav, .school-actions, .week-views, .chevron, dialog, "
+            ".source-link { display:none !important; }",
+            page,
+        )
+        self.assertIn('<strong aria-current="page">Upcoming</strong>', page)
+        self.assertIn(
+            'href="https://lukestein.com/nutrislicemenu/this-week/">This week</a>',
+            page,
+        )
+        self.assertIn(
+            'href="https://lukestein.com/nutrislicemenu/next-week/">Next week</a>',
             page,
         )
         self.assertIn("main:has(details[open]) { grid-template-columns:1fr; }", page)

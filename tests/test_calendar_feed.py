@@ -198,10 +198,16 @@ class CalendarTests(unittest.TestCase):
                     "angier.ics",
                     "brown.ics",
                     "index.html",
+                    "this-week/index.html",
+                    "next-week/index.html",
                     "favicon.svg",
                     "apple-touch-icon.png",
                     "angier/index.html",
+                    "angier/this-week/index.html",
+                    "angier/next-week/index.html",
                     "brown/index.html",
+                    "brown/this-week/index.html",
+                    "brown/next-week/index.html",
                 },
             )
             self.assertTrue(all(path.exists() for path in paths))

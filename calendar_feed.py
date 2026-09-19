@@ -256,6 +256,23 @@ def generate_calendars(
     output_paths.append(page_path)
     print(f"Wrote {page_path}")
 
+    for view in ("this-week", "next-week"):
+        view_page_path = output_dir / view / "index.html"
+        view_page_path.parent.mkdir(parents=True, exist_ok=True)
+        view_page_path.write_text(
+            render_menu_page(
+                SCHOOLS,
+                menus_by_school,
+                today,
+                generated_at,
+                event_summary,
+                view=view,
+            ),
+            encoding="utf-8",
+        )
+        output_paths.append(view_page_path)
+        print(f"Wrote {view_page_path}")
+
     for asset_name in ("favicon.svg", "apple-touch-icon.png"):
         asset_path = output_dir / asset_name
         shutil.copyfile(Path(__file__).with_name(asset_name), asset_path)
@@ -273,6 +290,25 @@ def generate_calendars(
         )
         output_paths.append(school_page_path)
         print(f"Wrote {school_page_path}")
+
+        for view in ("this-week", "next-week"):
+            school_view_page_path = (
+                output_dir / school["name"].lower() / view / "index.html"
+            )
+            school_view_page_path.parent.mkdir(parents=True, exist_ok=True)
+            school_view_page_path.write_text(
+                render_menu_page(
+                    [school],
+                    menus_by_school,
+                    today,
+                    generated_at,
+                    event_summary,
+                    view=view,
+                ),
+                encoding="utf-8",
+            )
+            output_paths.append(school_view_page_path)
+            print(f"Wrote {school_view_page_path}")
 
     return output_paths
 
