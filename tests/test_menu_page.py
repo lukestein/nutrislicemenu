@@ -200,6 +200,13 @@ class MenuPageTests(unittest.TestCase):
             'href="https://lukestein.com/nutrislicemenu/next-week/">Next week</a>',
             page,
         )
+        self.assertNotIn("View:", page)
+        self.assertIn(
+            ".week-views a { color:inherit; font-weight:500;", page
+        )
+        self.assertIn(
+            ".week-views strong { color:var(--ink); font-weight:600;", page
+        )
         self.assertIn("main:has(details[open]) { grid-template-columns:1fr; }", page)
         self.assertNotIn('<p class="eyebrow">Lunch menu</p>', page)
         self.assertIn("#angier { --school-accent:#2f68a0;", page)

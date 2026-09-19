@@ -93,7 +93,8 @@ def _week_view_navigation(
             items.append(f'<a href="{html.escape(url)}">{label}</a>')
     return (
         '<nav class="week-views" aria-label="Menu week">'
-        '<span>View:</span>' + '<span aria-hidden="true">·</span>'.join(items) + "</nav>"
+        + '<span aria-hidden="true">·</span>'.join(items)
+        + "</nav>"
     )
 
 
@@ -427,9 +428,9 @@ def render_menu_page(
     .empty-label {{ color:var(--muted); font-size:.88rem; }}
     footer {{ width:min(70rem,100%); margin:0 auto; padding:.3rem 1rem 2rem; color:var(--muted); font-size:.78rem; }}
     .standalone-footer {{ width:min(38rem,calc(100% - 1.2rem)); }}
-    .week-views {{ display:flex; flex-wrap:wrap; align-items:center; gap:.35rem; margin:0 0 .55rem; padding:0 0 .55rem; border-bottom:1px solid var(--line); }}
-    .week-views a {{ color:var(--blue-2); font-weight:700; text-underline-offset:.13em; }}
-    .week-views strong {{ color:var(--ink); }}
+    .week-views {{ display:flex; flex-wrap:wrap; align-items:center; gap:.35rem; margin:0 0 .55rem; padding:0 0 .55rem; border-bottom:1px solid var(--line); color:var(--muted); }}
+    .week-views a {{ color:inherit; font-weight:500; text-underline-offset:.13em; }}
+    .week-views strong {{ color:var(--ink); font-weight:600; }}
     dialog {{ width:min(31rem,calc(100% - 2rem)); border:0; border-radius:17px; padding:1.25rem; color:var(--ink); box-shadow:0 24px 70px #08172c55; }}
     dialog::backdrop {{ background:#0c1d35aa; backdrop-filter:blur(2px); }}
     dialog h2 {{ margin-bottom:.8rem; }}
