@@ -6,7 +6,8 @@ COMMON_SUMMARY_EXCLUSION_PATTERNS = [
     r"\b(?:milk|sauce|dressing|packet|syrup|ranch)\b",
     r"\b(?:fries|tater tots|rice|tortilla chips)\b",
     r"^(?:assorted chilled|fresh whole|sliced fresh) fruit$",
-    r"^(?:fresh |sliced |roasted |seasoned |shredded |marinated |red and green )?"
+    r"^(?:fresh |sliced |roasted |seasoned |shredded |marinated |red |green |"
+    r"yellow |red and green )?"
     r"(?:broccoli florets|baby carrots?|carrots?|cucumbers?|grape tomatoes|"
     r"diced tomatoes|mixed vegetables|green beans|bell pepper strips|lettuce)$",
     r"^(?:peas and carrots|vegetarian baked beans|three bean salad|pea salad|"

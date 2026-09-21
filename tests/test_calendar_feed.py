@@ -77,7 +77,12 @@ class SummaryTests(unittest.TestCase):
                 "Crispy Chicken Patty Sandwich",
                 "BBQ Cheddar Chicken Sandwich",
             ],
-            "Extra Extra": ["Garbanzo Beans", "Corn", "Herb Breadstick"],
+            "Extra Extra": [
+                "Garbanzo Beans",
+                "Corn",
+                "Herb Breadstick",
+                "Red Bell Pepper Strips",
+            ],
         }
 
         expected = (
