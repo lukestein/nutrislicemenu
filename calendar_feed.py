@@ -92,6 +92,21 @@ def event_summary(
     school: dict[str, str], menu_sections: dict[str, list[str]]
 ) -> str:
     """Build a compact calendar event title with distinct item separators."""
+    return _build_summary(school, menu_sections, max_length=MAX_SUMMARY_LENGTH)
+
+
+def web_summary(
+    school: dict[str, str], menu_sections: dict[str, list[str]]
+) -> str:
+    """Build a complete compact headline without the calendar title limit."""
+    return _build_summary(school, menu_sections, max_length=None)
+
+
+def _build_summary(
+    school: dict[str, str],
+    menu_sections: dict[str, list[str]],
+    max_length: int | None,
+) -> str:
     foods = []
     seen = set()
     for section_foods in menu_sections.values():
@@ -111,12 +126,12 @@ def event_summary(
     included = []
     for food in foods:
         candidate = f"{prefix}: {SUMMARY_SEPARATOR.join(included + [food])}"
-        if included and len(candidate) > MAX_SUMMARY_LENGTH:
+        if max_length is not None and included and len(candidate) > max_length:
             break
         included.append(food)
 
     summary = f"{prefix}: {SUMMARY_SEPARATOR.join(included)}"
-    if len(included) < len(foods):
+    if max_length is not None and len(included) < len(foods):
         summary += f"{SUMMARY_SEPARATOR}…"
     return summary
 
@@ -250,7 +265,7 @@ def generate_calendars(
 
     page_path = output_dir / "index.html"
     page_path.write_text(
-        render_menu_page(SCHOOLS, menus_by_school, today, generated_at, event_summary),
+        render_menu_page(SCHOOLS, menus_by_school, today, generated_at, web_summary),
         encoding="utf-8",
     )
     output_paths.append(page_path)
@@ -265,7 +280,7 @@ def generate_calendars(
                 menus_by_school,
                 today,
                 generated_at,
-                event_summary,
+                web_summary,
                 view=view,
             ),
             encoding="utf-8",
@@ -284,7 +299,7 @@ def generate_calendars(
         school_page_path.parent.mkdir(parents=True, exist_ok=True)
         school_page_path.write_text(
             render_menu_page(
-                [school], menus_by_school, today, generated_at, event_summary
+                [school], menus_by_school, today, generated_at, web_summary
             ),
             encoding="utf-8",
         )
@@ -302,7 +317,7 @@ def generate_calendars(
                     menus_by_school,
                     today,
                     generated_at,
-                    event_summary,
+                    web_summary,
                     view=view,
                 ),
                 encoding="utf-8",

@@ -58,6 +58,53 @@ class SummaryTests(unittest.TestCase):
             "🌭\u00a0· BBQ cheddar chicken sandwich",
         )
 
+    def test_brown_summary_removes_generic_sides_from_headlines(self):
+        sections = {
+            "Create": [
+                "Crispy Baked Tofu",
+                "General Tso Sauce",
+                "Brown Rice",
+                "Roasted Green Beans",
+            ],
+            "2Mato": [
+                "Classic Cheese Pizza",
+                "Traditional Pepperoni Pizza",
+                "Margherita Pizza",
+            ],
+            "Grill": [
+                "Classic American Cheeseburger",
+                "Black Bean Burger",
+                "Crispy Chicken Patty Sandwich",
+                "BBQ Cheddar Chicken Sandwich",
+            ],
+            "Extra Extra": ["Garbanzo Beans", "Corn", "Herb Breadstick"],
+        }
+
+        expected = (
+            "Brown: Crispy baked tofu\u00a0· Margherita 🍕\u00a0· "
+            "BBQ cheddar chicken sandwich"
+        )
+        self.assertEqual(calendar_feed.event_summary(BROWN, sections), expected)
+        self.assertEqual(calendar_feed.web_summary(BROWN, sections), expected)
+
+    def test_web_headline_is_not_limited_to_calendar_title_length(self):
+        sections = {
+            "Create": [
+                "Spaghetti with Chicken Meatballs",
+                "Baked Falafel Flatbread",
+                "Tempura Style Chicken Nuggets",
+                "Nashville Hot Chicken Sandwich",
+                "Cheese & Roasted Vegetable Panini",
+            ]
+        }
+
+        calendar_title = calendar_feed.event_summary(BROWN, sections)
+        web_headline = calendar_feed.web_summary(BROWN, sections)
+        self.assertTrue(calendar_title.endswith("\u00a0· …"))
+        self.assertNotIn("Cheese\u00a0& roasted vegetable panini", calendar_title)
+        self.assertIn("Cheese\u00a0& roasted vegetable panini", web_headline)
+        self.assertNotIn("…", web_headline)
+
     def test_summary_capitalizes_each_menu_item_for_each_school(self):
         sections = {
             "Lunch": ["Tempura Style Chicken Nuggets", "Jalapeno Carnita Pizza"]

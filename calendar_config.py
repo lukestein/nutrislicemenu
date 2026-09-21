@@ -8,15 +8,15 @@ COMMON_SUMMARY_EXCLUSION_PATTERNS = [
     r"^(?:assorted chilled|fresh whole|sliced fresh) fruit$",
     r"^(?:fresh |sliced |roasted |seasoned |shredded |marinated |red and green )?"
     r"(?:broccoli florets|baby carrots?|carrots?|cucumbers?|grape tomatoes|"
-    r"diced tomatoes|mixed vegetables|bell pepper strips|lettuce)$",
+    r"diced tomatoes|mixed vegetables|green beans|bell pepper strips|lettuce)$",
     r"^(?:peas and carrots|vegetarian baked beans|three bean salad|pea salad|"
     r"corn ranch salad|corn & black bean salad|spinach & romaine salad|"
     r"marinated tomato & cucumber salad)$",
     r"^(?:ketchup|mustard|salsa|sour cream)$",
     r"^(?:sliced fresh apples?|fresh .* apple)$",
-    r"^(?:carrot & celery sticks|pickled red onion|seasoned corn|"
-    r"cuban style black beans)$",
-    r"^(?:whole grain dinner roll|croutons?|breadstick)$",
+    r"^(?:carrot & celery sticks|pickled red onion|(?:seasoned )?corn|"
+    r"garbanzo beans|cuban style black beans)$",
+    r"^(?:whole grain dinner roll|croutons?|(?:herb )?breadstick)$",
     r"^.*cucumbers?$",
 ]
 
