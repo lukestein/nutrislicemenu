@@ -18,16 +18,61 @@ WEB_SUMMARY_REPLACEMENTS = {
     "🥗": "salad",
 }
 MENU_DAY_ROLLOVER_HOUR = 13
-# Web-only labels for Brown's recurring 2Mato and Grill mains. An item is shown
-# in the "Every day" row only if one of its posted names occurs on every
-# displayed Brown menu day; two distinct vegetarian burgers have appeared in
-# that recurring Grill slot on different weeks.
-BROWN_EVERYDAY_MAINS = (
-    ("Cheese pizza", "2Mato", ("Classic Cheese Pizza",)),
-    ("Pepperoni pizza", "2Mato", ("Traditional Pepperoni Pizza",)),
-    ("Cheeseburger", "Grill", ("Classic American Cheeseburger",)),
-    ("Veggie/black bean burger", "Grill", ("Veggie Burger", "Black Bean Burger")),
-    ("Crispy chicken patty sandwich", "Grill", ("Crispy Chicken Patty Sandwich",)),
+# Web-only labels for Brown's recurring mains. An item is shown in the
+# "Every day" footer only if one of its posted names occurs on every displayed
+# Brown menu day; two distinct vegetarian burgers have appeared in the same
+# recurring Grill slot on different weeks.
+BROWN_EVERYDAY_GROUPS = (
+    (
+        "Pizza & grill",
+        (
+            ("Cheese pizza", "2Mato", ("Classic Cheese Pizza",)),
+            ("Pepperoni pizza", "2Mato", ("Traditional Pepperoni Pizza",)),
+            ("Cheeseburger", "Grill", ("Classic American Cheeseburger",)),
+            (
+                "Veggie/black bean burger",
+                "Grill",
+                ("Veggie Burger", "Black Bean Burger"),
+            ),
+            (
+                "Crispy chicken patty sandwich",
+                "Grill",
+                ("Crispy Chicken Patty Sandwich",),
+            ),
+        ),
+    ),
+    (
+        "On the go",
+        (
+            (
+                "Crispy chicken Caesar salad",
+                "On the Go",
+                ("Crispy Chicken Caesar Salad",),
+            ),
+            (
+                "Turkey ham & cheese sandwich",
+                "On the Go",
+                ("Turkey Ham & Cheese Sandwich",),
+            ),
+            (
+                "Creamy chicken Caesar wrap",
+                "On the Go",
+                ("Creamy Chicken Caesar Wrap",),
+            ),
+            (
+                "Mixed greens salad with cheese",
+                "On the Go",
+                ("Mixed Greens Salad with Cheese",),
+            ),
+            ("Turkey chef salad", "On the Go", ("Turkey Chef Salad",)),
+            ("Buffalo chicken wrap", "On the Go", ("Buffalo Chicken Wrap",)),
+            (
+                "Hummus, chips & veggie bento box",
+                "On the Go",
+                ("Hummus, Chips, and Veggie Bento Box",),
+            ),
+        ),
+    ),
 )
 
 
@@ -208,26 +253,41 @@ def _brown_everyday_footer(
     """Show only Brown mains posted on every day in the visible window."""
     if len(school_dates) < 2:
         return ""
-    labels = []
-    for label, section, names in BROWN_EVERYDAY_MAINS:
-        possible_names = {name.casefold() for name in names}
-        if all(
-            possible_names.intersection(
-                food.casefold() for food in menus[menu_date].get(section, [])
+    rendered_groups = []
+    for group_label, candidates in BROWN_EVERYDAY_GROUPS:
+        labels = []
+        for label, section, names in candidates:
+            possible_names = {name.casefold() for name in names}
+            if all(
+                possible_names.intersection(
+                    food.casefold() for food in menus[menu_date].get(section, [])
+                )
+                for menu_date in school_dates
+            ):
+                labels.append(label)
+        if not labels:
+            continue
+        # <wbr> permits a wrap after a slash without introducing visible space;
+        # a nonbreaking space keeps an ampersand with the preceding word.
+        summary = "\u00a0· ".join(
+            html.escape(typographic_text(label).replace(" & ", "\u00a0& ")).replace(
+                "/", "/<wbr>"
             )
-            for menu_date in school_dates
-        ):
-            labels.append(label)
-    if not labels:
+            for label in labels
+        )
+        rendered_group_label = html.escape(group_label.replace(" & ", "\u00a0& "))
+        rendered_groups.append(
+            '<div class="everyday-group">'
+            f'<span class="everyday-group-label">{rendered_group_label}</span>'
+            f'<span class="day-summary">{summary}</span>'
+            "</div>"
+        )
+    if not rendered_groups:
         return ""
-    # <wbr> permits a wrap after a slash without introducing visible space.
-    summary = "\u00a0· ".join(
-        html.escape(label).replace("/", "/<wbr>") for label in labels
-    )
     return f"""
         <div class="everyday-footer">
           <span class="day-name"><strong>Every day</strong></span>
-          <span class="day-summary">{summary}</span>
+          <div class="everyday-groups">{''.join(rendered_groups)}</div>
         </div>"""
 
 
@@ -434,6 +494,8 @@ def render_menu_page(
     .day:has(+ .day.week-break) {{ border-bottom:0; }}
     .day.week-break {{ margin-top:.55rem; border-top:3px solid var(--school-accent,var(--blue-2)); }}
     .everyday-footer {{ display:grid; grid-template-columns:5rem 1fr; gap:.75rem; align-items:center; min-height:4rem; padding:.8rem 1.1rem; background:var(--school-tint); }}
+    .everyday-groups {{ display:grid; gap:.38rem; }}
+    .everyday-group-label {{ display:inline-block; margin-right:.45rem; color:var(--muted); font-size:.72rem; font-weight:700; letter-spacing:.045em; text-transform:uppercase; }}
     .day:last-child {{ border-bottom:0; }}
     details.day summary {{ display:grid; grid-template-columns:5rem 1fr 1rem; gap:.75rem; align-items:center; min-height:4.35rem; padding:.7rem .5rem; cursor:pointer; list-style:none; }}
     details.day summary::-webkit-details-marker {{ display:none; }}
@@ -511,6 +573,8 @@ def render_menu_page(
       .day {{ border-bottom:.6pt solid #999; break-inside:avoid; }}
       .day.week-break {{ margin-top:.08in; border-top:2pt solid #000; }}
       .everyday-footer {{ grid-template-columns:1in 1fr; gap:.08in; min-height:0; padding:.08in .14in; border-top:1pt solid #555; background:#eee; break-inside:avoid; print-color-adjust:exact; }}
+      .everyday-groups {{ gap:.04in; }}
+      .everyday-group-label {{ font-size:7.5pt; }}
       details.day summary {{ grid-template-columns:1in 1fr; gap:.08in; min-height:0; padding:.08in .04in; cursor:default; }}
       .day-name strong {{ font-size:10pt; }}
       .everyday-footer .day-name strong {{ font-size:10pt; }}
