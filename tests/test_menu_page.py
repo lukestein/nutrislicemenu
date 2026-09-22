@@ -320,6 +320,15 @@ class MenuPageTests(unittest.TestCase):
                         "Veggie Burger",
                         "Crispy Chicken Patty Sandwich",
                     ],
+                    "On the Go": [
+                        "Crispy Chicken Caesar Salad",
+                        "Turkey Ham & Cheese Sandwich",
+                        "Creamy Chicken Caesar Wrap",
+                        "Mixed Greens Salad with Cheese",
+                        "Turkey Chef Salad",
+                        "Buffalo Chicken Wrap",
+                        "Hummus, Chips, and Veggie Bento Box",
+                    ],
                 },
                 dt.date(2026, 9, 16): {
                     "2Mato": ["Classic Cheese Pizza", "Traditional Pepperoni Pizza"],
@@ -327,6 +336,15 @@ class MenuPageTests(unittest.TestCase):
                         "Classic American Cheeseburger",
                         "Black Bean Burger",
                         "Crispy Chicken Patty Sandwich",
+                    ],
+                    "On the Go": [
+                        "Crispy Chicken Caesar Salad",
+                        "Turkey Ham & Cheese Sandwich",
+                        "Creamy Chicken Caesar Wrap",
+                        "Mixed Greens Salad with Cheese",
+                        "Turkey Chef Salad",
+                        "Buffalo Chicken Wrap",
+                        "Hummus, Chips, and Veggie Bento Box",
                     ],
                 },
             },
@@ -349,6 +367,15 @@ class MenuPageTests(unittest.TestCase):
                     "\u00a0· Veggie/<wbr>black bean burger\u00a0· Crispy chicken patty sandwich",
                     page,
                 )
+                self.assertIn("Pizza\u00a0&amp; grill", page)
+                self.assertIn("On the go", page)
+                self.assertIn(
+                    "Crispy chicken Caesar salad\u00a0· Turkey ham\u00a0&amp; cheese sandwich"
+                    "\u00a0· Creamy chicken Caesar wrap\u00a0· Mixed greens salad with cheese"
+                    "\u00a0· Turkey chef salad\u00a0· Buffalo chicken wrap"
+                    "\u00a0· Hummus, chips\u00a0&amp; veggie bento box",
+                    page,
+                )
                 self.assertEqual(page.count("<wbr>"), 1)
                 self.assertNotIn("Veggie/ black bean burger", page)
                 self.assertIn(
@@ -365,6 +392,7 @@ class MenuPageTests(unittest.TestCase):
                 self.assertIn(
                     ".everyday-footer .day-name strong { font-size:10pt; }", page
                 )
+                self.assertIn('.everyday-group-label { display:inline-block;', page)
                 self.assertNotIn('<details class="day everyday">', page)
 
         angier_page = render_menu_page(
