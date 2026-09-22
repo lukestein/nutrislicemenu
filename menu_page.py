@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 import html
+import re
 from collections.abc import Callable
 
 from menu_common import EASTERN_TIME, typographic_text
@@ -18,6 +19,13 @@ WEB_SUMMARY_REPLACEMENTS = {
     "🥗": "salad",
 }
 MENU_DAY_ROLLOVER_HOUR = 13
+BROWN_WEB_DETAIL_EXCLUSION_PATTERNS = (
+    re.compile(
+        r"^(?:ketchup|mustard|mayonnaise|mayo)(?:\s+packet)?(?:\s*,.*)?$",
+        re.IGNORECASE,
+    ),
+    re.compile(r"^.*\bdressing(?:\s+packet)?(?:\s*,.*)?$", re.IGNORECASE),
+)
 # Web-only labels for Brown's recurring mains. An item is shown in the
 # "Every day" footer only if one of its posted names occurs on every displayed
 # Brown menu day; two distinct vegetarian burgers have appeared in the same
@@ -195,16 +203,35 @@ def format_web_summary(compact_summary: str, school_name: str) -> str:
     return compact_summary[:1].upper() + compact_summary[1:]
 
 
-def _menu_sections(menu_sections: dict[str, list[str]]) -> str:
+def _menu_sections(
+    menu_sections: dict[str, list[str]], school_slug: str
+) -> str:
     blocks = []
     for section, foods in menu_sections.items():
         if section in IGNORED_SECTIONS:
             continue
+        visible_foods = [
+            food
+            for food in foods
+            if school_slug != "brown-middle-school"
+            or not any(
+                pattern.search(food)
+                for pattern in BROWN_WEB_DETAIL_EXCLUSION_PATTERNS
+            )
+        ]
+        if not visible_foods:
+            continue
         heading = ""
         if section not in HIDE_SECTION_HEADERS:
-            heading = f'<h4>{html.escape(typographic_text(section))}</h4>'
+            display_section = (
+                "Pizza"
+                if school_slug == "brown-middle-school" and section == "2Mato"
+                else section
+            )
+            heading = f'<h4>{html.escape(typographic_text(display_section))}</h4>'
         items = "".join(
-            f"<li>{html.escape(typographic_text(food))}</li>" for food in foods
+            f"<li>{html.escape(typographic_text(food))}</li>"
+            for food in visible_foods
         )
         blocks.append(f'<div class="menu-section">{heading}<ul>{items}</ul></div>')
     return "".join(blocks)
@@ -240,7 +267,7 @@ def _day_card(
             <span class="chevron" aria-hidden="true"></span>
           </summary>
           <div class="day-details">
-            {_menu_sections(menu_sections)}
+            {_menu_sections(menu_sections, school["slug"])}
             <a class="source-link" href="{html.escape(source_url)}" target="_blank" rel="noreferrer">View on Nutrislice</a>
           </div>
         </details>"""

@@ -524,6 +524,48 @@ class MenuPageTests(unittest.TestCase):
         self.assertIn("Meat Lover’s &lt;script&gt;alert(1)&lt;/script&gt;", page)
         self.assertNotIn("<script>alert(1)</script>", page)
 
+    def test_brown_expanded_details_hide_condiments(self):
+        menu_date = dt.date(2026, 9, 14)
+        generated_at = dt.datetime(2026, 9, 14, 16, tzinfo=dt.timezone.utc)
+        foods = [
+            "Beef Hot Dog on Whole Wheat",
+            "Ketchup Packet",
+            "Ranch Dressing",
+            "Creamy Caesar Dressing",
+            "General Tso Sauce",
+        ]
+        brown_page = render_menu_page(
+            SCHOOLS[1:],
+            {
+                "brown-middle-school": {
+                    menu_date: {
+                        "2Mato": ["Classic Cheese Pizza"],
+                        "Grill": foods,
+                    }
+                }
+            },
+            menu_date,
+            generated_at,
+            event_summary,
+        )
+        self.assertIn("<h4>Pizza</h4>", brown_page)
+        self.assertNotIn("<h4>2Mato</h4>", brown_page)
+        self.assertIn("Beef Hot Dog on Whole Wheat", brown_page)
+        self.assertIn("General Tso Sauce", brown_page)
+        self.assertNotIn("Ketchup Packet", brown_page)
+        self.assertNotIn("Ranch Dressing", brown_page)
+        self.assertNotIn("Creamy Caesar Dressing", brown_page)
+
+        angier_page = render_menu_page(
+            SCHOOLS[:1],
+            {"angier-elementary": {menu_date: {"Lunch": foods}}},
+            menu_date,
+            generated_at,
+            event_summary,
+        )
+        self.assertIn("Ketchup Packet", angier_page)
+        self.assertIn("Ranch Dressing", angier_page)
+
 
 if __name__ == "__main__":
     unittest.main()
